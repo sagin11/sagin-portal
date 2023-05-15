@@ -1,0 +1,13 @@
+﻿@model LoginModel
+
+@{
+    ViewData["title"] = "Logowanie";   
+}
+
+<form asp-action="Login" method="post">
+    
+    <input type="text" class="form-control" asp-for="Email">
+    <input type="password" class="form-control" asp-for="Password">
+    
+    <button type="submit" class="btn btn-success">Wejdź w świat sagina</button>
+</form>
