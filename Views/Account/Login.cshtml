@@ -1,13 +1,28 @@
-﻿@model LoginModel
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model LoginModel
 
 @{
     ViewData["title"] = "Logowanie";   
 }
 
+
 <form asp-action="Login" method="post">
-    
     <input type="text" class="form-control" asp-for="Email">
+    <span class="text-danger" asp-validation-for="Email"></span>
+    
     <input type="password" class="form-control" asp-for="Password">
+    <span class="text-danger" asp-validation-for="Password"></span>
     
     <button type="submit" class="btn btn-success">Wejdź w świat sagina</button>
+
+    @* <ul class="text-danger"> *@
+    @* *@
+    @*     @foreach (ModelStateEntry v1 in ViewData.ModelState.Values) { *@
+    @*         foreach (ModelError v in v1.Errors) { *@
+    @*             <li>@v.ErrorMessage</li> *@
+    @*         } *@
+    @*     } *@
+    @* *@
+    @* </ul> *@
+    
 </form>

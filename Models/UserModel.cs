@@ -1,5 +1,8 @@
-﻿namespace SaginPortal.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace SaginPortal.Models;
+
+[Table("User")]
 public class UserModel {
     public int Id { get; set; }
     public string Name { get; set; }

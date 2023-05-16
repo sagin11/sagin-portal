@@ -13,10 +13,12 @@ internal abstract class Program
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString!));
+        builder.Services.AddDbContext<AppDbContext>(options => {
+            options.UseMySQL("server=localhost;user=phpmyadmin;password=root;database=saginportal;port=3306");
+        });
 
         builder.Services.AddSession(options => {
-            options.Cookie.Name = "MateckiWorker";
+            options.Cookie.Name = ".MateckiWorker";
             options.Cookie.IsEssential = true;
             options.IdleTimeout = TimeSpan.FromDays(30);
         });
@@ -31,6 +33,9 @@ internal abstract class Program
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+        
+        // Session
+        app.UseSession();
 
         app.UseRouting();
 
