@@ -33,6 +33,10 @@ public class AccountController : Controller {
 
         if (password == null || email == null)
             return View();
+        var test = await _appDbContext.User.Take(1).ToListAsync();
+
+        Console.WriteLine(test.FirstOrDefault());
+        
 
         var results = await _appDbContext.User.Where(u => u.Email == email).Select(u => new {
             u.Email,
