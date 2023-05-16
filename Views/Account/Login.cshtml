@@ -7,13 +7,20 @@
 
 
 <form asp-action="Login" method="post">
-    <input type="text" class="form-control" asp-for="Email">
-    <span class="text-danger" asp-validation-for="Email"></span>
     
-    <input type="password" class="form-control" asp-for="Password">
-    <span class="text-danger" asp-validation-for="Password"></span>
-    
-    <button type="submit" class="btn btn-success">Wejdź w świat sagina</button>
+    <div class="mb-3">
+        <label for="email" class="form-label">Adres email</label>
+        <input id="email" type="text" class="form-control" asp-for="Email">
+        <span class="text-danger form-text" asp-validation-for="Email"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Hasło</label>
+        <input type="password" class="form-control" asp-for="Password">
+        <span class="text-danger form-text" asp-validation-for="Password"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zaloguj się</button>
 
     @* <ul class="text-danger"> *@
     @* *@
@@ -24,5 +31,5 @@
     @*     } *@
     @* *@
     @* </ul> *@
-    
+
 </form>

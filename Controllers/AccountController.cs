@@ -16,6 +16,10 @@ public class AccountController : Controller {
 
     [HttpGet]
     public IActionResult Login() {
+        
+        if (HttpContext.Session.Keys.Contains("UserId")) {
+            return RedirectToAction("Index", "Dashboard");
+        }
 
         return View();
         
@@ -41,7 +45,7 @@ public class AccountController : Controller {
 
             if (BCrypt.Net.BCrypt.Verify(password, results.FirstOrDefault()?.PasswordHash)) {
                 HttpContext.Session.SetInt32("UserId", results.FirstOrDefault()!.Id);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             } else {
                 ModelState.AddModelError("Password", "Błędne hasło.");
             }
@@ -57,6 +61,11 @@ public class AccountController : Controller {
     //     return View();
     // }
 
+    public IActionResult Logout() {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Login", "Account");
+    }
+    
     // public IActionResult ForgotPassword() {
     //     return View();
     // }
