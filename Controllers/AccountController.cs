@@ -39,7 +39,7 @@ public class AccountController : Controller {
         if (results.Count > 0) {
             
 
-                if (BCrypt.Net.BCrypt.Verify(password, results.FirstOrDefault()?.PasswordHash)) {
+            if (BCrypt.Net.BCrypt.Verify(password, results.FirstOrDefault()?.PasswordHash)) {
                 HttpContext.Session.SetInt32("UserId", results.FirstOrDefault()!.Id);
                 return RedirectToAction("Index", "Home");
             } else {
