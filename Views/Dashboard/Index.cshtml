@@ -8,9 +8,40 @@
 <br>
 
 <h3>Lista testów:</h3>
-<ul>
-    <li>Test 1</li>
-    <li>Test 2</li>
-</ul>
+@{
+    var tests = ViewBag.tests;
+    var questions=ViewBag.questions;
+    var answers = ViewBag.answers;
+
+
+    if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals(""))
+    {
+        foreach (var test in tests)
+        {
+            <h4>@test.Name</h4>
+            foreach (var question in questions)
+            {
+                if (question.TestId == test.Id)
+                {
+                    <h5>@question.QuestionText</h5>
+                    foreach (var answer in answers)
+                    {
+                        if (answer.QuestionId == question.Id)
+                        {
+                            if (answer.IsCorrect)
+                            {
+                                <span style="color: green">@answer.Content</span><br/>
+                            }
+                            else
+                            {
+                                <span>@answer.Content</span><br/>
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @* <a asp-action="create" class="btn btn-success"></a> *@

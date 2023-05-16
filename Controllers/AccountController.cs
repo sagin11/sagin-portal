@@ -8,10 +8,10 @@ namespace SaginPortal.Controllers;
 
 public class AccountController : Controller {
 
-    private readonly AppDbContext _appDbContext;
+    private readonly AppDbContext _dbContext;
 
     public AccountController(AppDbContext appDbContext) {
-        _appDbContext = appDbContext;
+        _dbContext = appDbContext;
     }
 
     [HttpGet]
@@ -33,12 +33,8 @@ public class AccountController : Controller {
 
         if (password == null || email == null)
             return View();
-        var test = await _appDbContext.User.Take(1).ToListAsync();
-
-        Console.WriteLine(test.FirstOrDefault());
         
-
-        var results = await _appDbContext.User.Where(u => u.Email == email).Select(u => new {
+        var results = await _dbContext.Users.Where(u => u.Email == email).Select(u => new {
             u.Email,
             u.PasswordHash,
             u.Id
