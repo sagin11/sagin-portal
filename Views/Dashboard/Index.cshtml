@@ -3,45 +3,123 @@
     Layout = "_Layout";
 }
 
-<h2>Dashboard</h2>
 
-<br>
+<div class="row">
+    <div class="col-sm-12 col-lg-6 card" style="border-radius: 20px;" id="exams">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <h2 class="display-5">Moje testy</h2>
+                </div>
+                        
+                <div class="col-6">
+                            
+                </div>
+            </div>
+                    
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-subtitle text-muted">Praca klasowa</div>
+                    <span class="card-title">Podzapytania SQL - KURWA NIE ZDASZ NIE MA CHUJA</span>
+                    <span class="text-muted">Test stworzony: 21.12.2022</span>
+                    <div class="text-muted">Klaas 2INFO</div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-subtitle text-muted">Praca klasowa</div>
+                    <span class="card-title">Podzapytania SQL - KURWA NIE ZDASZ NIE MA CHUJA</span>
+                    <span class="text-muted">Test stworzony: 21.12.2022</span>
+                    <div class="text-muted">Klaas 2INFO</div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="card-subtitle text-muted">Praca klasowa</div>
+                    <span class="card-title">Podzapytania SQL - KURWA NIE ZDASZ NIE MA CHUJA</span>
+                    <p class="text-muted">Test stworzony: 21.12.2022</p>
+                    <div class="text-muted">Klaas 2INFO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h3>Statystyki</h3>
 
-<h3>Lista testów:</h3>
-@{
-    var tests = ViewBag.tests;
-    var questions=ViewBag.questions;
-    var answers = ViewBag.answers;
+                <p>02/04</p>
+                @* Tutaj stworzyć progressbar *@
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                </div>
+                
+                <p class="text-muted text-decoration-underline">Aktywne testy</p>
+                
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+                    <div class="card-body">
+                        <h3>Statystyki</h3>
+        
+                        <p>02/04</p>
+                        @* Tutaj stworzyć progressbar *@
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                        </div>
+                        
+                        <p class="text-muted text-decoration-underline">Aktywne testy</p>
+                        
+                    </div>
+                </div>
+    </div>
+</div>
 
 
-    if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals(""))
-    {
-        foreach (var test in tests)
-        {
-            <h4>@test.Name</h4>
-            foreach (var question in questions)
-            {
-                if (question.TestId == test.Id)
-                {
-                    <h5>@question.QuestionText</h5>
-                    foreach (var answer in answers)
-                    {
-                        if (answer.QuestionId == question.Id)
-                        {
-                            if (answer.IsCorrect)
-                            {
-                                <span style="color: green">@answer.Content</span><br/>
-                            }
-                            else
-                            {
-                                <span>@answer.Content</span><br/>
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+
+
+
+
+
+
+@* <h3>Lista testów:</h3> *@
+@* @{ *@
+@*     var tests = ViewBag.tests; *@
+@*     var questions=ViewBag.questions; *@
+@*     var answers = ViewBag.answers; *@
+@* *@
+@* *@
+@*     if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals("")) *@
+@*     { *@
+@*         foreach (var test in tests) *@
+@*         { *@
+@*             <h4 class="mb-4 mt-4">@test.Name</h4> *@
+@*             foreach (var question in questions) *@
+@*             { *@
+@*                 if (question.TestId == test.Id) *@
+@*                 { *@
+@*                     <h5>@question.QuestionText</h5> *@
+@*                     foreach (var answer in answers) *@
+@*                     { *@
+@*                         if (answer.QuestionId == question.Id) *@
+@*                         { *@
+@*                             if (answer.IsCorrect) *@
+@*                             { *@
+@*                                 <span class="text-success">@answer.Content</span><br/> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 <span>@answer.Content</span><br/> *@
+@*                             } *@
+@*                         } *@
+@*                     } *@
+@*                 } *@
+@*             } *@
+@*         } *@
+@*     } *@
+@* } *@
 
 @* <a asp-action="create" class="btn btn-success"></a> *@

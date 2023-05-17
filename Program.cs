@@ -14,12 +14,7 @@ internal abstract class Program
         var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
     
         builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString!));
-        // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        //
-        // builder.Services.AddDbContext<AppDbContext>(options =>
-        // {
-        //     options.UseMySQL("server=130.162.35.208;user=sagin;password=Sagin#2115_I_Love_Sagin;database=sagin;port=42521");
-        // });
+
 
         builder.Services.AddSession(options => {
             options.Cookie.Name = ".MateckiWorker";
