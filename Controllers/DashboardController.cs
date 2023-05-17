@@ -39,7 +39,7 @@ public class DashboardController : Controller {
 
         var test = await _dbContext.Tests.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
 
-        if (test.Count == 0) {
+        if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");
         }
         
