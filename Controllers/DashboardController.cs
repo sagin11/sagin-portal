@@ -15,7 +15,6 @@ public class DashboardController : Controller {
         
         if (!HttpContext.Session.Keys.Contains("UserId")) {
             return RedirectToAction("Login", "Account");
-
         }
         
         var tests = await _dbContext.Tests.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId")).ToListAsync();
@@ -28,6 +27,27 @@ public class DashboardController : Controller {
         ViewBag.questions = questions;
         ViewBag.answers = answers;
 
+        return View();
+    }
+
+    [Route("Dashboard/Exam/{id:int}")]
+    public async Task<IActionResult> Exam(int id = -1) {
+        
+        if (!HttpContext.Session.Keys.Contains("UserId")) {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var test = await _dbContext.Tests.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+
+        if (test.Count == 0) {
+            return RedirectToAction("Login", "Account");
+        }
+        
+        Console.WriteLine(test.Count);
+        
+        if (id == -1) {
+            return StatusCode(404);
+        }
         return View();
     }
     
