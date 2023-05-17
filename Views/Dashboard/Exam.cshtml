@@ -1,1 +1,63 @@
-exam 
+@{
+    ViewData["Title"] = "Zarządzanie testem";
+    var exams = ViewBag.exams;
+    var questions = ViewBag.questions;
+    var answers = ViewBag.answers;
+
+    int zdawalons = 32;
+    int sredniWynik = 52;
+    int liczbaPodejsc = 12;
+}
+
+<section id="dashboard-exam-header">
+    <div class="background">
+        <h1 class="title">@exams[0].Name</h1>
+        <div class="test-status test-@exams[0].Status">
+            <div class="triangle"></div>
+            
+        </div>
+        <div class="buttons-panel">
+            <button class="">Wsztrzymaj</button>
+            <button class="">Wyłącz</button>
+        </div>
+        <span class="creation-time">@exams[0].CreationTime</span>
+        <span class="category">@exams[0].Category</span>
+    </div>
+</section>
+<section id="dashboard-exam-stats" style="margin-top: 15px">
+    <div class="background">
+        <div class="content">
+            <div class="stats">
+                <div>
+                    <span class="main">@liczbaPodejsc</span>
+                    <span class="sub">Liczba podejść</span>
+                </div>
+                <div>
+                    <span class="main">@zdawalons%</span>
+                    <span class="sub">Zdawalonść</span>
+                </div>
+                <div>
+                    <span class="main">@sredniWynik%</span>
+                    <span class="sub">Średni Wynik</span>
+                </div>
+            </div>
+            <div class="bar">
+                @{
+                    var firstBar = "#d9ffd2";   
+                    var secondBar = "#ffedd2";
+                    var firstBarWidth = zdawalons;
+                    var secondBarWidth = sredniWynik;
+                    if (zdawalons < sredniWynik)
+                    {
+                        firstBar = "#ffedd2";
+                        secondBar = "#d9ffd2";
+                        firstBarWidth = sredniWynik;
+                        secondBarWidth = zdawalons;
+                    }
+                } 
+                <div class="first-bar" style="--bg:@firstBar; --width: @firstBarWidth%"></div>
+                <div class="second-bar" style="--bg:@secondBar; --width: @secondBarWidth%"></div>
+            </div>
+        </div>
+    </div>
+</section>

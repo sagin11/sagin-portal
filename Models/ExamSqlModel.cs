@@ -31,9 +31,9 @@ public class QuestionModel
 public class ExamModel
 {
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public DateTime CreationTime { get; set; }
     public int CreatorId { get; set; }
-    public string Category { get; set; }
-    public string Status { get; set; }
+    public string? Category { get; set; }
+    public string? Status { get; set; }
 }

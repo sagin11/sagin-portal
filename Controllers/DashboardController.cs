@@ -48,6 +48,13 @@ public class DashboardController : Controller {
         if (id == -1) {
             return StatusCode(404);
         }
+        
+        var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+        var questions = await _dbContext.Questions.Where(t => t.ExamId == id).ToListAsync();
+        var answers = await _dbContext.Answers.Where(t => t.ExamId == id).ToListAsync();
+        ViewBag.exams = exams;
+        ViewBag.questions = questions;
+        ViewBag.answers = answers;
         return View();
     }
     
