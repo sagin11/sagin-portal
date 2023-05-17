@@ -1,0 +1,32 @@
+﻿body {
+  background: #eeeeee;
+  padding: 0;
+  margin: 0;
+}
+
+.test-card {
+  
+  color: #fdfdfd;
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  .test-title { 
+    color: black;
+    grid-area: 2 / 1 / 3 / 5;
+  }
+  .test-category {
+    color: #cac7cc;
+    grid-area: 1 / 1 / 2 / 2; 
+  }
+  .test-creation-date {
+    color: #cac7cc;
+    grid-area: 3 / 1 / 4 / 2; 
+  }
+  .test-class {
+    color: #cac7cc;
+    grid-area: 3 / 2 / 4 / 3; 
+  }
+}
