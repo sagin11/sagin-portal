@@ -9,6 +9,7 @@ body {
 }
 
 .dashboard-card {
+  min-height: 80vh;
   background: #fff;
   padding: 15px;
   border-radius: 18px;
@@ -39,7 +40,7 @@ a {
   grid-row-gap: 0;
   transition: 0.1s;
   &:hover {
-    transform: scale(1.02);
+    transform: translateZ(0) scale(1.02);
   }
   .test-Active {
     background: #deffe1;
@@ -66,7 +67,6 @@ a {
       border-width: 0 90px 100px 90px;
       border-color: transparent transparent #fff transparent;
       transform: translateX(-50%);
-
     }
   }
   .test-title {

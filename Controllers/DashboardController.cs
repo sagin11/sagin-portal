@@ -52,10 +52,11 @@ public class DashboardController : Controller {
         return View();
     }
     
+    
     [Route("Dashboard/CreateExam")]
     public async Task<IActionResult> CreateExam() {
         
-    
+        // _dbContext.Questions.Join(t => t.ExamId == 1);
         
         return View();
     }

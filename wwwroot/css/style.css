@@ -5,6 +5,7 @@ body {
 }
 
 .dashboard-card {
+  min-height: 80vh;
   background: #fff;
   padding: 15px;
   border-radius: 18px;
@@ -36,7 +37,7 @@ a {
   transition: 0.1s;
 }
 .test-card:hover {
-  transform: scale(1.02);
+  transform: translateZ(0) scale(1.02);
 }
 .test-card .test-Active {
   background: #deffe1;
