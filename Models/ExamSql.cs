@@ -17,6 +17,7 @@ public class QuestionModel
     public int Id { get; set; }
     public int TestId { get; set; }
     public string QuestionText { get; set; }
+    public int Type { get; set; }
 }
 
 public class TestModel
@@ -25,4 +26,14 @@ public class TestModel
     public string Name { get; set; }
     public DateTime CreationTime { get; set; }
     public int CreatorId { get; set; }
+    public string Category { get; set; }
+}
+
+public enum QuestionTypes
+{
+    Closed = 0,
+    Multiple = 1,
+    TextWithCheck = 2,
+    TextWithOutCheck = 3
+
 }
