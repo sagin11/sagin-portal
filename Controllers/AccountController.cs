@@ -7,15 +7,21 @@ using SaginPortal.Models;
 namespace SaginPortal.Controllers; 
 
 public class AccountController : Controller {
-
+    
+    private readonly IWebHostEnvironment _hostingEnvironment;
     private readonly AppDbContext _dbContext;
 
-    public AccountController(AppDbContext appDbContext) {
+    public AccountController(AppDbContext appDbContext, IWebHostEnvironment hostingEnvironment) {
         _dbContext = appDbContext;
+        _hostingEnvironment = hostingEnvironment;
     }
 
     [HttpGet]
     public IActionResult Login() {
+
+        if (_hostingEnvironment.IsDevelopment()) {
+            HttpContext.Session.SetInt32("UserId", 1);
+        }
         
         if (HttpContext.Session.Keys.Contains("UserId")) {
             return RedirectToAction("Index", "Dashboard");

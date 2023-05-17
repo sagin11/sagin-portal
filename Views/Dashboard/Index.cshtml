@@ -3,6 +3,37 @@
     Layout = "_Layout";
 }
 
+<div class="modal fade" tabindex="-1" id="createExam" aria-hidden="true" aria-labelledby="Tworzenie testu">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Wstępne ustawienia testu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-labbel="Zamknij"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form asp-action="CreateExam" asp-controller="Dashboard" method="post">
+                    
+                    <div class="mb-3">
+                        <label for="examName" class="form-label">Nazwa testu</label>
+                        <input type="text" id="examName" class="form-control">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="examCategory" class="form-label">Kategoria testu</label>
+                        <input type="text" id="examCategory" class="form-control">
+                    </div>
+
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                <button class="btn btn-success" data-bs-dismiss="modal">Dodaj test</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-sm-12 col-lg-6" id="exams">
@@ -61,7 +92,7 @@
                     }
                 </div>
             </div>
-            <button class="create-exam-button" onclick="showModal()">Dodaj test</button>
+            <button class="create-exam-button" data-bs-target="#createExam" data-bs-toggle="modal">Dodaj test</button>
         </div>
     </div>
     <div class="col-sm-12 col-lg-6">
@@ -95,7 +126,7 @@
         </div>
     </div>
 </div>
->
+
 
 
 
