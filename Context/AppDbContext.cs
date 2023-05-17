@@ -11,7 +11,7 @@ public class AppDbContext : DbContext {
     public DbSet<UserModel> Users { get; set; }
     public DbSet<AnswerModel> Answers { get; set; }
     public DbSet<QuestionModel> Questions { get; set; }
-    public DbSet<TestModel> Tests { get; set; }
+    public DbSet<ExamModel> Exams { get; set; }
     
 
 }

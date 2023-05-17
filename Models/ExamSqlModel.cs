@@ -1,21 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace SaginPortal.Models;
 
+[Table("Answers")]
 
 public class AnswerModel
 {
     public int Id { get; set; }
-    public int TestId { get; set; }
+    public int ExamId { get; set; }
     public int QuestionId { get; set; }
     public string Content { get; set; }
     public bool IsCorrect { get; set; }
 }
 
+[Table("Questions")]
 public class QuestionModel
 {
     public int Id { get; set; }
-    public int TestId { get; set; }
+    public int ExamId { get; set; }
     public string QuestionText { get; set; }
     // Closed = 0,
     // Multiple = 1,   
@@ -24,7 +27,8 @@ public class QuestionModel
     public int Type { get; set; }
 }
 
-public class TestModel
+[Table("Exams")]
+public class ExamModel
 {
     public int Id { get; set; }
     public string Name { get; set; }

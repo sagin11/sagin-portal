@@ -17,13 +17,13 @@ public class DashboardController : Controller {
             return RedirectToAction("Login", "Account");
         }
         
-        var tests = await _dbContext.Tests.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId")).ToListAsync();
+        var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId")).ToListAsync();
         
-        if (!(tests.Count > 0)) return View();
+        if (!(exams.Count > 0)) return View();
         
         var questions = await _dbContext.Questions.ToListAsync();
         var answers = await _dbContext.Answers.ToListAsync();
-        ViewBag.tests = tests;
+        ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
 
@@ -37,7 +37,7 @@ public class DashboardController : Controller {
             return RedirectToAction("Login", "Account");
         }
 
-        var test = await _dbContext.Tests.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+        var test = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
 
         if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");

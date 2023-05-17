@@ -31,21 +31,21 @@
             </div>
                   
             @{
-                var tests = ViewBag.tests;
+                var exams = ViewBag.exams;
                 var questions = ViewBag.questions;
                 var answers = ViewBag.answers;
 
 
-                if (!tests.Equals("") || !questions.Equals("") || !answers.Equals(""))
+                if (!exams.Equals("") || !questions.Equals("") || !answers.Equals(""))
                 {
-                    foreach (var test in tests)
+                    foreach (var exam in exams)
                     {
-                        <a href="/Dashboard/Exam/@test.Id">
+                        <a href="/Dashboard/Exam/@exam.Id">
                             <div class="test-card">
-                                <span class="test-category">@test.Category</span>
-                                <span class="test-title">@test.Name</span>
+                                <span class="test-category">@exam.Category</span>
+                                <span class="test-title">@exam.Name</span>
                                 <span class="test-creation-date">27.01.2022</span>
-                                <div class="test-status test-@test.Status">
+                                <div class="test-status test-@exam.Status">
                                     <div class="triangle"></div>
                                 </div>
                             </div>
@@ -95,37 +95,37 @@
 
 
 
-<h3>Lista testów:</h3>
-@{
-    
-    if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals(""))
-    {
-        foreach (var test in tests)
-        {
-            <h4 class="mb-4 mt-4">@test.Name</h4>
-            foreach (var question in questions)
-            {
-                if (question.TestId == test.Id)
-                {
-                    <h5>@question.QuestionText</h5>
-                    foreach (var answer in answers)
-                    {
-                        if (answer.QuestionId == question.Id)
-                        {
-                            if (answer.IsCorrect)
-                            {
-                                <span class="text-success">@answer.Content</span><br/>
-                            }
-                            else
-                            {
-                                <span>@answer.Content</span><br/>
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+@* <h3>Lista testów:</h3> *@
+@* @{ *@
+@*      *@
+@*     if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals("")) *@
+@*     { *@
+@*         foreach (var exam in exams) *@
+@*         { *@
+@*             <h4 class="mb-4 mt-4">@test.Name</h4> *@
+@*             foreach (var question in questions) *@
+@*             { *@
+@*                 if (question.ExamId == test.Id) *@
+@*                 { *@
+@*                     <h5>@question.QuestionText</h5> *@
+@*                     foreach (var answer in answers) *@
+@*                     { *@
+@*                         if (answer.QuestionId == question.Id) *@
+@*                         { *@
+@*                             if (answer.IsCorrect) *@
+@*                             { *@
+@*                                 <span class="text-success">@answer.Content</span><br/> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 <span>@answer.Content</span><br/> *@
+@*                             } *@
+@*                         } *@
+@*                     } *@
+@*                 } *@
+@*             } *@
+@*         } *@
+@*     } *@
+@* } *@
 
 @* <a asp-action="create" class="btn btn-success"></a> *@
