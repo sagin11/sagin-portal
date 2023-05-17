@@ -42,10 +42,12 @@
                     {
                         <a href="/Dashboard/Exam/@test.Id">
                             <div class="test-card">
-                                <span class="test-category">Praca lidkowa</span>
+                                <span class="test-category">@test.Category</span>
                                 <span class="test-title">@test.Name</span>
-                                <span class="test-class">2TP</span>
                                 <span class="test-creation-date">27.01.2022</span>
+                                <div class="test-status test-@test.Status">
+                                    <div class="triangle"></div>
+                                </div>
                             </div>
                         </a>
                     }

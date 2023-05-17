@@ -10,6 +10,16 @@
   margin-bottom: 10px;
   justify-content: end;
 }
+@media only screen and (max-width: 990px) {
+  .legend-border {
+    margin-right: auto;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .legend-border {
+    flex-direction: column;
+  }
+}
 .legend-border .legend-item {
   display: flex;
 }
@@ -19,6 +29,11 @@
   width: 14px;
   height: 14px;
   background: var(--color);
+}
+@media only screen and (max-width: 400px) {
+  .legend-border .legend-item .legend-icon {
+    margin-right: 2px;
+  }
 }
 .legend-border .legend-item .legend-text {
   margin-right: 12px;
