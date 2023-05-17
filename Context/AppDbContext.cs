@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SaginPortal.Models;
+using SaginPortal.Models.ExamModels;
 
 namespace SaginPortal.Context;
 

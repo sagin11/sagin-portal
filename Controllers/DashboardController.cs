@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaginPortal.Context;
+using SaginPortal.Packages;
 
 namespace SaginPortal.Controllers; 
 
+[CheckLoginStatus]
 public class DashboardController : Controller {
     private readonly AppDbContext _dbContext;
 
@@ -12,11 +14,7 @@ public class DashboardController : Controller {
     }
     
     public async Task<IActionResult> Index() {
-        
-        if (!HttpContext.Session.Keys.Contains("UserId")) {
-            return RedirectToAction("Login", "Account");
-        }
-        
+
         var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId")).ToListAsync();
         
         if (!(exams.Count > 0)) return View();
@@ -29,13 +27,9 @@ public class DashboardController : Controller {
 
         return View();
     }
-
+    
     [Route("Dashboard/Exam/{id:int}")]
     public async Task<IActionResult> Exam(int id = -1) {
-        
-        if (!HttpContext.Session.Keys.Contains("UserId")) {
-            return RedirectToAction("Login", "Account");
-        }
 
         var test = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
 
@@ -55,6 +49,14 @@ public class DashboardController : Controller {
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
+        return View();
+    }
+    
+    [Route("Dashboard/CreateExam")]
+    public async Task<IActionResult> CreateExam() {
+        
+    
+        
         return View();
     }
     

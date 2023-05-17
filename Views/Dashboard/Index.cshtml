@@ -31,9 +31,9 @@
             </div>
                   
             @{
-                var exams = ViewBag.exams;
-                var questions = ViewBag.questions;
-                var answers = ViewBag.answers;
+                var exams = ViewBag.exams ?? "";
+                var questions = ViewBag.questions ?? "";
+                var answers = ViewBag.answers ?? "";
 
 
                 if (!exams.Equals("") || !questions.Equals("") || !answers.Equals(""))
