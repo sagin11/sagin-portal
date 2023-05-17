@@ -30,21 +30,18 @@ public class DashboardController : Controller {
         return View();
     }
 
+    [ExamIdValidator]
     [Route("Dashboard/Exam/{id:int}")]
     public async Task<IActionResult> Exam(int id = -1) {
 
         var test = await _dbContext.Exams
             .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
-
+        
         if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");
         }
 
         Console.WriteLine(test.Count);
-
-        if (id == -1) {
-            return StatusCode(404);
-        }
 
         var exams = await _dbContext.Exams
             .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
@@ -86,5 +83,17 @@ public class DashboardController : Controller {
         return RedirectToAction("Index", "Dashboard");
     }
 
+    [ExamIdValidator]
+    [Route("/Dashboard/Exam/{id:int}/Edit")]
+    public async Task<IActionResult> EditExam(int id = -1) {
+        var test = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+        
+        if (test.Count <= 0) {
+            return RedirectToAction("Login", "Account");
+        }
+        
+        return View();
+    }
 
 }
