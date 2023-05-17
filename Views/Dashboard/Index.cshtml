@@ -5,8 +5,8 @@
 
 
 <div class="row">
-    <div class="col-sm-12 col-lg-6 card" style="border-radius: 20px;" id="exams">
-        <div class="card-body">
+    <div class="col-sm-12 col-lg-6" id="exams">
+        <div class="dashboard-card">
             <div class="row">
                 <div class="col-6">
                     <h2 class="display-5">Moje testy</h2>
@@ -29,31 +29,28 @@
                             
                 </div>
             </div>
-                    
-            <div class="test-card">
-                <span class="test-category">Praca lidkowa</span>
-                <span class="test-title">idka ni zdasz sql XXDXD</span>
-                <span class="test-class">2TP</span>
-                <span class="test-creation-date">27.01.2022</span>
-            </div>
-            
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="card-subtitle text-muted">Praca klasowa</div>
-                    <span class="card-title">Podzapytania SQL - NIE ZDASZ</span>
-                    <span class="text-muted">Test stworzony: 21.12.2022</span>
-                    <div class="text-muted">Klaas 2INFO</div>
-                </div>
-            </div>
-            
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="card-subtitle text-muted">Praca klasowa</div>
-                    <span class="card-title">Podzapytania SQL - NIE ZDASZ</span>
-                    <p class="text-muted">Test stworzony: 21.12.2022</p>
-                    <div class="text-muted">Klaas 2INFO</div>
-                </div>
-            </div>
+                  
+            @{
+                var tests = ViewBag.tests;
+                var questions = ViewBag.questions;
+                var answers = ViewBag.answers;
+
+
+                if (!tests.Equals("") || !questions.Equals("") || !answers.Equals(""))
+                {
+                    foreach (var test in tests)
+                    {
+                        <a href="">
+                            <div class="test-card">
+                                <span class="test-category">Praca lidkowa</span>
+                                <span class="test-title">@test.Name</span>
+                                <span class="test-class">2TP</span>
+                                <span class="test-creation-date">27.01.2022</span>
+                            </div>
+                        </a>
+                    }
+                }
+            }
         </div>
     </div>
     <div class="col-sm-12 col-lg-6">
@@ -98,11 +95,7 @@
 
 <h3>Lista testów:</h3>
 @{
-    var tests = ViewBag.tests;
-    var questions=ViewBag.questions;
-    var answers = ViewBag.answers;
-
-
+    
     if (!tests.Equals("")|| !questions.Equals("") || !answers.Equals(""))
     {
         foreach (var test in tests)
