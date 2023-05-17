@@ -5,10 +5,41 @@ body {
 }
 
 .dashboard-card {
-  min-height: 80vh;
+  height: 80vh;
   background: #fff;
   padding: 15px;
   border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.dashboard-card .content {
+  height: 80%;
+}
+.dashboard-card .content .exams {
+  position: relative;
+  height: 90%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.dashboard-card .content .exams::-webkit-scrollbar {
+  width: 8px;
+}
+.dashboard-card .content .exams::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.dashboard-card .content .exams::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.dashboard-card .content .exams::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.create-exam-button {
+  outline: none;
+  bottom: 20px;
 }
 
 a {
@@ -23,7 +54,7 @@ a {
   color: #fdfdfd;
   border: solid 1px rgba(185, 185, 185, 0.1882352941);
   border-radius: 10px;
-  width: 100%;
+  width: 95%;
   height: 80px;
   padding: 5px 0 5px 1.2rem;
   margin-left: auto;

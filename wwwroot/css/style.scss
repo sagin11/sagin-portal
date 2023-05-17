@@ -9,12 +9,44 @@ body {
 }
 
 .dashboard-card {
-  min-height: 80vh;
+  height: 80vh;
   background: #fff;
   padding: 15px;
   border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  .content {
+    height: 80%;
+    .exams {
+      position: relative;
+      height: 90%;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
+  }
 }
 
+.create-exam-button {
+  outline: none;
+  bottom: 20px;
+}
 a {
   text-decoration: none;
   color: black;
@@ -27,7 +59,7 @@ a {
   color: #fdfdfd;
   border: solid 1px #b9b9b930;
   border-radius: 10px;
-  width: 100%;
+  width: 95%;
   height: 80px;
   padding: 5px 0 5px 1.2rem;
   margin-left: auto;
@@ -82,7 +114,6 @@ a {
     grid-area: 3 / 1 / 4 / 3;
   }
 }
-
 
 #dashboard-exam-header {
   .background {
