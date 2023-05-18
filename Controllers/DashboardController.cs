@@ -20,15 +20,12 @@ public class DashboardController : Controller {
         var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId"))
             .ToListAsync();
 
-        // if (!(exams.Count > 0)) return View();
+        if (!(exams.Count > 0)) return View();
 
         var questions = await _dbContext.Questions.ToListAsync();
         var answers = await _dbContext.Answers.ToListAsync();
         var categories = await _dbContext.ExamCategories.ToListAsync();
-        // ViewBag.categories = categories;
-        Console.Write("PA PA");
-        Console.Write(categories);
-        Console.Write("PA PA");
+        ViewBag.categories = categories;
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
@@ -56,6 +53,7 @@ public class DashboardController : Controller {
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
+        ViewBag.ExamId = id;
         return View();
     }
 
@@ -70,7 +68,7 @@ public class DashboardController : Controller {
         if (examName == null || (examCategoryId == null || examCategoryName == null)) {
             return RedirectToAction("Index", "Dashboard");
         }
-
+        
         if (examCategoryId != null) {
             if (examCategoryName.Length > 0) {
                 var category = new ExamCategoryModel() {
@@ -82,7 +80,7 @@ public class DashboardController : Controller {
                 await _dbContext.SaveChangesAsync();
 
             }
-        }   
+        }
 
         // error
         if (examName.Length > 200 || examCategoryName.Length > 30) {
@@ -144,40 +142,46 @@ public class DashboardController : Controller {
 
     [ExamIdValidator]
     [HttpPost]
-    public async Task<IActionResult> AddQuestion(AddQuestionModel model, int id = -1)
+    public async Task<IActionResult> AddQuestion(AddQuestionModel model)
     {
-        Console.WriteLine(model.QuestionText);
-        Console.WriteLine(model.Type);
-        foreach (var answer in model.Answers)
+        if (!ModelState.IsValid)
         {
-            Console.WriteLine(answer.Content, answer.IsCorrect);
+            return View("Exam");
         }
-
+        
         var question = new QuestionModel()
         {
             QuestionText = model.QuestionText,
             Type = model.Type,
+            ExamId = HttpContext.Session.GetInt32("ExamId")
         };
 
         _dbContext.Questions.Add(question);
         await _dbContext.SaveChangesAsync();
 
-        int qId = question.Id;
+        var qId = question.Id; // Pobierz prawidłowy identyfikator pytania
+
+        int id = (int)(HttpContext.Session.GetInt32("ExamId"));
         
         foreach (var answer in model.Answers)
         {
             var answerEntity = new AnswerModel()
             {
-                ExamId = answer.ExamId,
-                QuestionId = qId,
+                ExamId = HttpContext.Session.GetInt32("ExamId"),
+                QuestionId = qId, // Przypisz prawidłowy identyfikator pytania
                 Content = answer.Content,
                 IsCorrect = answer.IsCorrect
             };
-            
+
             _dbContext.Answers.Add(answerEntity);
         }
 
         await _dbContext.SaveChangesAsync();
+        
+        var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.questions = questions;
+        var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.answers = answers;
 
         return View("EditExam");
     }
@@ -191,12 +195,13 @@ public class DashboardController : Controller {
         if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");
         }
+        
+        HttpContext.Session.SetInt32("ExamId", id);
  
         var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
         ViewBag.questions = questions;
         var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
         ViewBag.answers = answers;
-
         
         return View();
     }
