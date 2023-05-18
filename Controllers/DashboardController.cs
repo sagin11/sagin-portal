@@ -62,42 +62,87 @@ public class DashboardController : Controller {
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateExam(AddExamModel model) {
         var examName = model.Name;
+
         var examCategoryId = model.CategoryId;
         var examCategoryName = model.CategoryName;
 
-        if (examName == null || (examCategoryId == null || examCategoryName == null)) {
-            return RedirectToAction("Index", "Dashboard");
+        if (examCategoryId == null && examCategoryName != null)
+        {
+            var category = new ExamCategoryModel()
+            {
+                CategoryName = examCategoryName,
+                UserId = HttpContext.Session.GetInt32("UserId")!.Value
+            };
+
+            _dbContext.Add(category);
+            await _dbContext.SaveChangesAsync();
+
+            // Tu dodaj kod obsługujący utworzenie modelu examCategoryName
+        }
+        else if (examCategoryId != null && examCategoryName == null)
+        {
+            var category = new ExamCategoryModel()
+            {
+                CategoryName = examCategoryName,
+                UserId = HttpContext.Session.GetInt32("UserId")!.Value
+            };
+
+            _dbContext.Add(category);
+            await _dbContext.SaveChangesAsync();
+            
+            var exam = new ExamModel {
+                Name = examName,
+                CategoryId = examCategoryId,
+                CreationTime = DateTime.Now,
+                CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
+                Status = "Disabled"
+            };
+            
+            _dbContext.Add(exam);
+            await _dbContext.SaveChangesAsync();
+
+            // Tu dodaj kod obsługujący utworzenie modelu examCategoryId
+        }
+        else
+        {
+            // Jeżeli oba examCategoryId i examCategoryName są null, może być konieczne obsłużenie tej sytuacji
         }
         
-        if (examCategoryId != null) {
-            if (examCategoryName.Length > 0) {
-                var category = new ExamCategoryModel() {
-                    CategoryName = examCategoryName,
-                    UserId = HttpContext.Session.GetInt32("UserId")!.Value
-                };
-
-                _dbContext.ExamCategories.Add(category);
-                await _dbContext.SaveChangesAsync();
-
-            }
-        }
-
-        // error
-        if (examName.Length > 200 || examCategoryName.Length > 30) {
-            return RedirectToAction("Index", "Dashboard");
-        }
-
-        var exam = new ExamModel {
-            Name = examName,
-            CategoryId = examCategoryId,
-            CreationTime = DateTime.Now,
-            CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
-            Status = "Disabled"
-        };
         
-        _dbContext.Exams.Add(exam);
-        await _dbContext.SaveChangesAsync();
-
+        // if (examCategoryId == null) {
+        //     Console.WriteLine("KYS");
+        //     Console.WriteLine(examCategoryId);
+        //     Console.WriteLine("KYS");
+        // var exam = new ExamModel {
+        //     Name = examName,
+        //     CategoryId = examCategoryId,
+        //     CreationTime = DateTime.Now,
+        //     CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
+        //     Status = "Disabled"
+        // };
+        //
+        //     _dbContext.Exams.Add(exam);
+        //     await _dbContext.SaveChangesAsync();
+        // }
+        // else if (examCategoryName != null) {
+        //     var category = new ExamCategoryModel() {
+        //         CategoryName = examCategoryName,
+        //         UserId = HttpContext.Session.GetInt32("UserId")!.Value
+        //     };
+        //
+        //     _dbContext.ExamCategories.Add(category);
+        //     await _dbContext.SaveChangesAsync();
+        //
+        //     _dbContext.Exams.Add(new ExamModel() {
+        //         Name = examName,
+        //         CategoryId = category.Id,
+        //         CreationTime = DateTime.Now,
+        //         CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
+        //         Status = "Disabled"
+        //     });
+        //     await _dbContext.SaveChangesAsync();
+        // }
+        
         return RedirectToAction("Index", "Dashboard");
     }
 

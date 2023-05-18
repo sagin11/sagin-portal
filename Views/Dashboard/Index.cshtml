@@ -21,7 +21,7 @@
                     
                     <div class="mb-3">
                         <label for="examName" class="form-label">Nazwa testu</label>
-                        <input type="text" id="examName" class="form-control" asp-for="Name" required="required" maxlength="200">
+                        <input type="text" id="examName" class="form-control" name="Name" required="required" maxlength="200">
                         @* <span class="text-danger form-text" asp-validation-for="Name"></span> *@
                     </div>
                     
@@ -30,7 +30,7 @@
                         <div style="display: flex">
 
                             <div class="examCategory">
-                                <select id="examCategory" class="form-control" asp-for="CategoryId" required="required">
+                                <select id="examCategory" class="form-control" name="CategoryId" required="required">
                                     @foreach (var category in ViewBag.categories) {
                                         <option value="@category.Id">@category.CategoryName</option>
                                     }
@@ -84,7 +84,7 @@
                                             document.querySelector(".field-button").innerHTML = `<img src="img/minus.svg"/>`;
                                             } else {
                                                 document.querySelector(".examCategory").innerHTML = `
-                                                <select id="examCategory" class="form-control" name="Category" required="required">
+                                                <select id="examCategory" class="form-control" name="CategoryId" required="required">
                                                     @foreach (var category in ViewBag.categories) {
                                                         <option value="@category.Id">@category.CategoryName</option>
                                                     }
