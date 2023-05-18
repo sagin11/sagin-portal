@@ -20,12 +20,15 @@ public class DashboardController : Controller {
         var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId"))
             .ToListAsync();
 
-        if (!(exams.Count > 0)) return View();
+        // if (!(exams.Count > 0)) return View();
 
         var questions = await _dbContext.Questions.ToListAsync();
         var answers = await _dbContext.Answers.ToListAsync();
         var categories = await _dbContext.ExamCategories.ToListAsync();
-        ViewBag.categories = categories;
+        // ViewBag.categories = categories;
+        Console.Write("PA PA");
+        Console.Write(categories);
+        Console.Write("PA PA");
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
@@ -61,17 +64,26 @@ public class DashboardController : Controller {
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateExam(AddExamModel model) {
         var examName = model.Name;
-        var examCategoryId = model.Category;
+        var examCategoryId = model.CategoryId;
         var examCategoryName = model.CategoryName;
 
         if (examName == null || (examCategoryId == null || examCategoryName == null)) {
             return RedirectToAction("Index", "Dashboard");
         }
 
-        if (examCategoryName == null && examCategoryId != null) {
-            
-        }
-        
+        if (examCategoryId != null) {
+            if (examCategoryName.Length > 0) {
+                var category = new ExamCategoryModel() {
+                    CategoryName = examCategoryName,
+                    UserId = HttpContext.Session.GetInt32("UserId")!.Value
+                };
+
+                _dbContext.ExamCategories.Add(category);
+                await _dbContext.SaveChangesAsync();
+
+            }
+        }   
+
         // error
         if (examName.Length > 200 || examCategoryName.Length > 30) {
             return RedirectToAction("Index", "Dashboard");
@@ -79,7 +91,7 @@ public class DashboardController : Controller {
 
         var exam = new ExamModel {
             Name = examName,
-            Category = examCategoryId,
+            CategoryId = examCategoryId,
             CreationTime = DateTime.Now,
             CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
             Status = "Disabled"
@@ -141,18 +153,18 @@ public class DashboardController : Controller {
             Console.WriteLine(answer.Content, answer.IsCorrect);
         }
 
-        var question = new AddQuestionModel()
+        var question = new QuestionModel()
         {
             QuestionText = model.QuestionText,
             Type = model.Type,
         };
 
-        _dbContext.AddQuestions.Add(question);
+        _dbContext.Questions.Add(question);
         await _dbContext.SaveChangesAsync();
 
         int qId = question.Id;
         
-        foreach (var answer in question.Answers)
+        foreach (var answer in model.Answers)
         {
             var answerEntity = new AnswerModel()
             {

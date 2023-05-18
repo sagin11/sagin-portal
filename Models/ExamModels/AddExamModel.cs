@@ -7,6 +7,6 @@ public class AddExamModel {
     public string? Name { get; set; }
     
     [Required(ErrorMessage = "Pole kategoria jest puste.")]
-    public int Category { get; set; }
+    public int CategoryId { get; set; }
     public string? CategoryName { get; set; }
 }

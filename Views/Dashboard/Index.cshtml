@@ -30,7 +30,7 @@
                         <div style="display: flex">
 
                             <div class="examCategory">
-                                <select id="examCategory" class="form-control" asp-for="Category" required="required">
+                                <select id="examCategory" class="form-control" asp-for="CategoryId" required="required">
                                     @foreach (var category in ViewBag.categories) {
                                         <option value="@category.Id">@category.CategoryName</option>
                                     }

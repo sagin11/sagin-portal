@@ -9,6 +9,6 @@ public class ExamModel
     public string? Name { get; set; }
     public DateTime CreationTime { get; set; }
     public int CreatorId { get; set; }
-    public int Category { get; set; }
+    public int CategoryId { get; set; }
     public string? Status { get; set; }
 }
