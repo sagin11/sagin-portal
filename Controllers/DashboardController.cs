@@ -24,6 +24,8 @@ public class DashboardController : Controller {
 
         var questions = await _dbContext.Questions.ToListAsync();
         var answers = await _dbContext.Answers.ToListAsync();
+        var categories = await _dbContext.ExamCategories.ToListAsync();
+        ViewBag.categories = categories;
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
@@ -59,20 +61,25 @@ public class DashboardController : Controller {
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateExam(AddExamModel model) {
         var examName = model.Name;
-        var examCategory = model.Category;
+        var examCategoryId = model.Category;
+        var examCategoryName = model.CategoryName;
 
-        if (examName == null || examCategory == null) {
+        if (examName == null || (examCategoryId == null || examCategoryName == null)) {
             return RedirectToAction("Index", "Dashboard");
         }
 
+        if (examCategoryName == null && examCategoryId != null) {
+            
+        }
+        
         // error
-        if (examName.Length > 200 || examCategory.Length > 30) {
+        if (examName.Length > 200 || examCategoryName.Length > 30) {
             return RedirectToAction("Index", "Dashboard");
         }
 
         var exam = new ExamModel {
             Name = examName,
-            Category = examCategory,
+            Category = examCategoryId,
             CreationTime = DateTime.Now,
             CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
             Status = "Disabled"
