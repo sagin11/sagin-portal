@@ -18,10 +18,16 @@ body {
   flex-direction: column;
 
   .content {
+    position: relative;
     height: 80%;
     .exams {
-      position: relative;
-      height: 90%;
+      @media only screen and (max-height: 900px) {
+        height: 70%;
+      }
+      @media only screen and (max-height: 600px) {
+        height: 50%;
+      }
+      height: 85%;
       overflow-x: hidden;
       overflow-y: auto;
 
@@ -46,6 +52,15 @@ body {
 .create-exam-button {
   outline: none;
   bottom: 20px;
+  border: none;
+  position: relative;
+  margin: 0 auto;
+  width: 200px;
+  padding: 10px;
+  border-radius: 10px;
+  color: #2f4942;
+  background: #edfcff;
+  font-weight: bold;
 }
 a {
   text-decoration: none;
@@ -87,7 +102,9 @@ a {
   .test-status {
     grid-area: 1 / 4 / 5 / 5;
     position: relative;
-    width: 100%;
+    width: 10%;
+    margin-left: auto;
+    margin-right: 0px;
     margin-top: -5px;
     height: 78px;
     overflow: hidden;

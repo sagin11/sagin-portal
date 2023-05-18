@@ -14,13 +14,23 @@ body {
   flex-direction: column;
 }
 .dashboard-card .content {
+  position: relative;
   height: 80%;
 }
 .dashboard-card .content .exams {
-  position: relative;
-  height: 90%;
+  height: 85%;
   overflow-x: hidden;
   overflow-y: auto;
+}
+@media only screen and (max-height: 900px) {
+  .dashboard-card .content .exams {
+    height: 70%;
+  }
+}
+@media only screen and (max-height: 600px) {
+  .dashboard-card .content .exams {
+    height: 50%;
+  }
 }
 .dashboard-card .content .exams::-webkit-scrollbar {
   width: 8px;
@@ -40,6 +50,15 @@ body {
 .create-exam-button {
   outline: none;
   bottom: 20px;
+  border: none;
+  position: relative;
+  margin: 0 auto;
+  width: 200px;
+  padding: 10px;
+  border-radius: 10px;
+  color: #2f4942;
+  background: #edfcff;
+  font-weight: bold;
 }
 
 a {
@@ -82,7 +101,9 @@ a {
 .test-card .test-status {
   grid-area: 1/4/5/5;
   position: relative;
-  width: 100%;
+  width: 10%;
+  margin-left: auto;
+  margin-right: 0px;
   margin-top: -5px;
   height: 78px;
   overflow: hidden;
