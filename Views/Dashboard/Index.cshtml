@@ -1,5 +1,5 @@
 @{
-// TODO Dodać informację o dodaniu testu
+    // TODO Dodać informację o dodaniu testu
 }
 @model SaginPortal.Models.ExamModels.AddExamModel
 @{
@@ -28,40 +28,107 @@
                     <div class="mb-3">
                         <label for="examCategory" class="form-label">Kategoria testu</label>
                         <div style="display: flex">
-                            <input type="text" id="examCategory" class="form-control" asp-for="Category" required="required" maxlength="30">
-                            
+
+                            <div class="examCategory">
+                                <select id="examCategory" class="form-control" asp-for="Category" required="required">
+                                    @foreach (var category in ViewBag.categories) {
+                                        <option value="@category.Id">@category.CategoryName</option>
+                                    }
+
+                                </select>
+                            </div>
+
                             <style>
                                 .field-button {
                                     border-radius: 100%;
                                     padding: 5px;
                                     transition: 0.2s;
+                                    margin-left: 10px;
+                                    cursor: pointer;
                                 }
                                 .field-button:hover {
+                                    background-color: rgba(100, 100, 100, 0.2);
+                                }
+                                .field-button:active {
                                     background-color: rgba(100, 100, 100, 0.4);
                                 }
                             </style>
-                            <div style="" class="field-button">
+                            <div style="" class="field-button" id="AddCategory">
                                 <img src="img/plus.svg"/>
                             </div>
+
+                            @{
+                                if (ViewBag.categories.Count == 0) {
+                                    <script>
+                                        let categoryState = false;
+                                        let categoryCount = 0;
+                                    
+                                    </script>
+                                } else {
+                                    <script>let categoryState = true;</script>
+                                }
+                            }
+                            
+                            <script>
+                                                       
+                                const addCategory = document.getElementById("AddCategory");
+                                
+                                if (typeof categoryCount !== 'undefined') {
+                                    addCategory.style.display = "none";
+                                }
+                                
+                                function editInput() {
+                                    if(categoryState === false) {
+                                        document.querySelector(".examCategory").innerHTML = `
+                                            <input type="text" name="CategoryName" required="required" maxlength="30" class="form-control">`;
+                                            
+                                            document.querySelector(".field-button").innerHTML = `<img src="img/minus.svg"/>`;
+                                            } else {
+                                                document.querySelector(".examCategory").innerHTML = `
+                                                <select id="examCategory" class="form-control" name="Category" required="required">
+                                                    @foreach (var category in ViewBag.categories) {
+                                                        <option value="@category.Id">@category.CategoryName</option>
+                                                    }
+                                                </select>`;
+                                                
+                                        document.querySelector(".field-button").innerHTML = `
+                                            <img src="img/plus.svg"/>
+                                        `;
+                                        }      
+                                            
+                                        categoryState = !categoryState;     
+                                    }
+                                
+                                editInput();
+                                
+                                addCategory.addEventListener("click", () => {
+                                    editInput();                                    
+                                });
+                            
+                                function createCategory() {
+                                    fetch("/Dashboard/CreateCategory", {
+                                        method: "POST",
+                                        body: JSON.stringify({
+                                            "categoryName": "Sriri"
+                                        }),
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        }
+                                    })
+                                }
+                            
+                            
+                            
+                            
+                            
+                            </script>
+
                         </div>
-                        @* <span class="text-danger form-text" asp-validation-for="Category"></span> *@
                     </div>
 
                     <button class="btn btn-success" data-bs-dismiss="modal" type="submit">Dodaj test</button>
                             
-                    <script>
-                        function createCategory() {
-                            fetch("/Dashboard/CreateCategory", {
-                                method: "POST",
-                                body: JSON.stringify({
-                                    "categoryName": "Sriri"
-                                }),
-                                headers: {
-                                    "Content-Type": "application/json"
-                                }
-                            })
-                        }
-                    </script>
+                    
                 </form>
             </div>
             
