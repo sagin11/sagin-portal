@@ -1,45 +1,70 @@
 @* @model SaginPortal.Models.ExamModels.AddQuestionModel *@
 
+@{
+    ViewData["Title"] = "Edytuj test";
+    var questions = ViewBag.questions;
+    var answers = ViewBag.answers;
+}
 
-<form asp-action="AddQuestion" method="POST">
-    
-    <label for="QuestionText">Treść pytania</label>
-    <input type="text" name="QuestionText" id="QuestionText">
+@{
+    foreach (var question in questions)
+    {
+        <h1>@question.QuestionText</h1>
+        foreach (var answer in answers)
+        {
+            if (answer.QuestionId == question.Id)
+            {
+                <span>@answer.Content</span>
+            }
+        }
+    }
+}
 
-    <br>
-    
-    <label for="Type">Typ pytania</label>
-    <select name="Type" id="Type">
-        <option value="0">Zamknięte</option>
-        <option value="1">Wielokrotnego wyboru</option>
-        <option value="2">Krótka odpowiedź - NIE DZIAŁA</option>
-        <option value="3">Opisowe - NIE DZIAŁA</option>
-    </select>
-    
-    <br>
-    
-    <hr>
-    <p>Odpowiedzi:</p>
-    
-    <div class="answers">
-        
-        <input type="radio" name="singleAnswerCorrect" value="Answers[0].IsCorrect">
-        <input type="text" name="Answers[0].Content">
+<hr></hr>
 
-        <br>
-        
-        <input type="radio" name="singleAnswerCorrect" value="1">
-        <input type="text" name="Answers[1].Content">
-        
-        <br>
-        
-        <button id="addNextAnswer">Dodaj kolejną odpowiedź</button>
+<a href="Edit/AddQuestion">
+    Dodaj Pytanie
+</a>
 
-    </div>
-    
-    <button type="submit">Zapisz</button>
-    
-</form>
+@* <form asp-action="AddQuestion" method="POST"> *@
+@*      *@
+@*     <label for="QuestionText">Treść pytania</label> *@
+@*     <input type="text" name="QuestionText" id="QuestionText"> *@
+@* *@
+@*     <br> *@
+@*      *@
+@*     <label for="Type">Typ pytania</label> *@
+@*     <select name="Type" id="Type"> *@
+@*         <option value="0">Zamknięte</option> *@
+@*         <option value="1">Wielokrotnego wyboru</option> *@
+@*         <option value="2">Krótka odpowiedź - NIE DZIAŁA</option> *@
+@*         <option value="3">Opisowe - NIE DZIAŁA</option> *@
+@*     </select> *@
+@*      *@
+@*     <br> *@
+@*      *@
+@*     <hr> *@
+@*     <p>Odpowiedzi:</p> *@
+@*      *@
+@*     <div class="answers"> *@
+@*          *@
+@*         <input type="radio" name="singleAnswerCorrect" value="Answers[0].IsCorrect"> *@
+@*         <input type="text" name="Answers[0].Content"> *@
+@* *@
+@*         <br> *@
+@*          *@
+@*         <input type="radio" name="singleAnswerCorrect" value="1"> *@
+@*         <input type="text" name="Answers[1].Content"> *@
+@*          *@
+@*         <br> *@
+@*          *@
+@*         <button id="addNextAnswer">Dodaj kolejną odpowiedź</button> *@
+@* *@
+@*     </div> *@
+@*      *@
+@*     <button type="submit">Zapisz</button> *@
+@*      *@
+@* </form> *@
 
 
 @* @using (Html.BeginForm("AddQuestion", "Dashboard")) *@

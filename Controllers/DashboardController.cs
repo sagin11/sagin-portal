@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SaginPortal.Context;
 using SaginPortal.Models.ExamModels;
 using SaginPortal.Packages;
@@ -50,9 +52,7 @@ public class DashboardController : Controller {
         if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");
         }
-
-        Console.WriteLine(test.Count);
-
+        
         var exams = await _dbContext.Exams
             .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
         var questions = await _dbContext.Questions.Where(t => t.ExamId == id).ToListAsync();
@@ -153,48 +153,47 @@ public class DashboardController : Controller {
 
     [ExamIdValidator]
     [HttpPost]
-    public async Task<IActionResult> AddQuestion(AddQuestionModel model)
+    public async Task<IActionResult> AddQuestionApi()
     {
-        if (!ModelState.IsValid)
-        {
-            return View("Exam");
-        }
+        var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
+        var json = JsonConvert.DeserializeObject<JsonQuestionModel>(requestBody);
+        Console.WriteLine(json);
         
         var question = new QuestionModel()
         {
-            QuestionText = model.QuestionText,
-            Type = model.Type,
+            QuestionText = json!.QuestionText,
+            Type = json.Type,
             ExamId = HttpContext.Session.GetInt32("ExamId")
         };
-
+        
         _dbContext.Questions.Add(question);
         await _dbContext.SaveChangesAsync();
-
-        var qId = question.Id; // Pobierz prawidłowy identyfikator pytania
-
-        int id = (int)(HttpContext.Session.GetInt32("ExamId"));
         
-        foreach (var answer in model.Answers)
+        var qId = question.Id; // Pobierz prawidłowy identyfikator pytania
+        
+        int id = (int)HttpContext.Session.GetInt32("ExamId");
+        
+        foreach (var answer in json.Answers)
         {
             var answerEntity = new AnswerModel()
             {
                 ExamId = HttpContext.Session.GetInt32("ExamId"),
                 QuestionId = qId, // Przypisz prawidłowy identyfikator pytania
                 Content = answer.Content,
-                IsCorrect = answer.IsCorrect
+                IsCorrect = Convert.ToBoolean(answer.IsCorrect)
             };
-
+        
             _dbContext.Answers.Add(answerEntity);
         }
-
+        
         await _dbContext.SaveChangesAsync();
         
         var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
         ViewBag.questions = questions;
         var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
         ViewBag.answers = answers;
-
-        return View("EditExam");
+        
+        return Ok();
     }
 
     [ExamIdValidator]
@@ -217,6 +216,14 @@ public class DashboardController : Controller {
         return View();
     }
     
-    
+    [ExamIdValidator]
+    [Route("/Dashboard/Exam/{id:int}/Edit/AddQuestion")]
+    public async Task<IActionResult> AddQuestion(int id = -1)
+    {
+
+        @ViewBag.ExamId = id;
+        return View();
+    }
+
 
 }
