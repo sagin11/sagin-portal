@@ -122,7 +122,47 @@ public class DashboardController : Controller {
 
         return StatusCode(200);
     }
-    
+
+    [ExamIdValidator]
+    [HttpPost]
+    public async Task<IActionResult> AddQuestion(AddQuestionModel model, int id = -1)
+    {
+        Console.WriteLine(model.QuestionText);
+        Console.WriteLine(model.Type);
+        foreach (var answer in model.Answers)
+        {
+            Console.WriteLine(answer.Content, answer.IsCorrect);
+        }
+
+        var question = new AddQuestionModel()
+        {
+            QuestionText = model.QuestionText,
+            Type = model.Type,
+        };
+
+        _dbContext.AddQuestions.Add(question);
+        await _dbContext.SaveChangesAsync();
+
+        int qId = question.Id;
+        
+        foreach (var answer in question.Answers)
+        {
+            var answerEntity = new AnswerModel()
+            {
+                ExamId = answer.ExamId,
+                QuestionId = qId,
+                Content = answer.Content,
+                IsCorrect = answer.IsCorrect
+            };
+            
+            _dbContext.Answers.Add(answerEntity);
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return View("EditExam");
+    }
+
     [ExamIdValidator]
     [Route("/Dashboard/Exam/{id:int}/Edit")]
     public async Task<IActionResult> EditExam(int id = -1) {
@@ -132,8 +172,12 @@ public class DashboardController : Controller {
         if (test.Count <= 0) {
             return RedirectToAction("Login", "Account");
         }
-        
-        
+ 
+        var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.questions = questions;
+        var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.answers = answers;
+
         
         return View();
     }
