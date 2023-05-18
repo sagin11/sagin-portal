@@ -28,11 +28,24 @@
                     <div class="mb-3">
                         <label for="examCategory" class="form-label">Kategoria testu</label>
                         <input type="text" id="examCategory" class="form-control" asp-for="Category" required="required" maxlength="30">
+                        
+                        <a asp-action="" class="btn btn-warning">Dodaj kategorie</a>
                         @* <span class="text-danger form-text" asp-validation-for="Category"></span> *@
                     </div>
 
                     <button class="btn btn-success" data-bs-dismiss="modal" type="submit">Dodaj test</button>
-                    
+
+                    <script>
+                        fetch("/Dashboard/CreateCategory", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                "categoryName": "Sriri"
+                            }),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        })
+                    </script>
                 </form>
             </div>
             
