@@ -17,7 +17,14 @@ public class DashboardController : Controller {
 
     public async Task<IActionResult> Index() {
 
-        var exams = await _dbContext.Exams.Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId"))
+        var exams = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId"))
+            .Join(
+                _dbContext.ExamCategories,
+                exam => exam.CategoryId,
+                category => category.Id,
+                (exam, category) => new { Exam = exam, Category = category }
+            )
             .ToListAsync();
 
         if (!(exams.Count > 0)) return View();

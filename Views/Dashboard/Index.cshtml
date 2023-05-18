@@ -174,10 +174,12 @@
 
                         if (!exams.Equals("") || !questions.Equals("") || !answers.Equals(""))
                         {
-                            foreach (var exam in exams) {
+                            foreach (var item in exams) {
+                                var exam = item.Exam;
+                                var category = item.Category;
                                 <a href="/Dashboard/Exam/@exam.Id">
                                     <div class="test-card">
-                                        <span class="test-category">@exam.CategoryId</span>
+                                        <span class="test-category">@category.CategoryName</span>
                                         <span class="test-title">@exam.Name</span>
                                         <span class="test-creation-date">27.01.2022</span>
                                         <div class="test-status test-@exam.Status">
