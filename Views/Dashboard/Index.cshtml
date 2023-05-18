@@ -31,7 +31,7 @@
 
                             <div class="examCategory">
                                 <select id="examCategory" class="form-control" name="CategoryId" required="required">
-                                    @foreach (var category in ViewBag.categories) {
+                                    @foreach (var category in ViewBag.categories ?? "") {
                                         <option value="@category.Id">@category.CategoryName</option>
                                     }
                                 </select>
@@ -57,11 +57,12 @@
                             </div>
 
                             @{
-                                if (ViewBag.categories.Count == 0) {
+                                var categories = ViewBag.categories ?? null;
+
+                                if (categories == null) {
                                     <script>
                                         let categoryState = false;
-                                        let categoryCount = 0;
-                                    
+                                        let categoryCount = 0;   
                                     </script>
                                 } else {
                                     <script>let categoryState = true;</script>
@@ -85,7 +86,7 @@
                                             } else {
                                                 document.querySelector(".examCategory").innerHTML = `
                                                 <select id="examCategory" class="form-control" name="CategoryId" required="required">
-                                                    @foreach (var category in ViewBag.categories) {
+                                                    @foreach (var category in categories) {
                                                         <option value="@category.Id">@category.CategoryName</option>
                                                     }
                                                 </select>`;
@@ -181,7 +182,7 @@
                                     <div class="test-card">
                                         <span class="test-category">@category.CategoryName</span>
                                         <span class="test-title">@exam.Name</span>
-                                        <span class="test-creation-date">27.01.2022</span>
+                                        <span class="test-creation-date">@exam.CreationTime</span>
                                         <div class="test-status test-@exam.Status">
                                         </div>
                                     </div>

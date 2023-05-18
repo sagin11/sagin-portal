@@ -1,57 +1,77 @@
-@using System.Security.Cryptography
-@{
-    ViewData["Title"] = "Edytuj test";
-    var questions = ViewBag.questions;
-    var answers = ViewBag.answers;
-}
-
-@{
-    foreach (var question in questions)
-    {
-        <h1>@question.QuestionText</h1>
-        foreach (var answer in answers)
-        {
-            if (answer.QuestionId == question.Id)
-            {
-                <span>@answer.Content</span>
-            }
-        }
-    }
-}
-
-@model SaginPortal.Models.ExamModels.AddQuestionModel
+@* @model SaginPortal.Models.ExamModels.AddQuestionModel *@
 
 
-@using (Html.BeginForm("AddQuestion", "Dashboard"))
-{
-    <div>
-        @Html.LabelFor(m => m.QuestionText)
-        @Html.TextBoxFor(m => m.QuestionText)
-    </div>
+<form asp-action="AddQuestion" method="POST">
     
-    <div>
-        @Html.LabelFor(m => m.Type)
-        @Html.TextBoxFor(m => m.Type)
-    </div>
+    <label for="QuestionText">Treść pytania</label>
+    <input type="text" name="QuestionText" id="QuestionText">
+
+    <br>
     
-    <h4>Answers:</h4>
-    <div>
-        <div>
-            @Html.LabelFor(m => m.Answers[0].Content)
-            @Html.TextBoxFor(m => m.Answers[0].Content)
-            
-            @Html.LabelFor(m => m.Answers[0].IsCorrect)
-            @Html.CheckBoxFor(m => m.Answers[0].IsCorrect)
-        </div>
+    <label for="Type">Typ pytania</label>
+    <select name="Type" id="Type">
+        <option value="0">Zamknięte</option>
+        <option value="1">Wielokrotnego wyboru</option>
+        <option value="2">Krótka odpowiedź - NIE DZIAŁA</option>
+        <option value="3">Opisowe - NIE DZIAŁA</option>
+    </select>
+    
+    <br>
+    
+    <hr>
+    <p>Odpowiedzi:</p>
+    
+    <div class="answers">
         
-        <div>
-            @Html.LabelFor(m => m.Answers[1].Content)
-            @Html.TextBoxFor(m => m.Answers[1].Content)
-            
-            @Html.LabelFor(m => m.Answers[1].IsCorrect)
-            @Html.CheckBoxFor(m => m.Answers[1].IsCorrect)
-        </div>
+        <input type="radio" name="singleAnswerCorrect" value="Answers[0].IsCorrect">
+        <input type="text" name="Answers[0].Content">
+
+        <br>
+        
+        <input type="radio" name="singleAnswerCorrect" value="1">
+        <input type="text" name="Answers[1].Content">
+        
+        <br>
+        
+        <button id="addNextAnswer">Dodaj kolejną odpowiedź</button>
+
     </div>
     
-    <input type="submit" value="Submit" />
-}
+    <button type="submit">Zapisz</button>
+    
+</form>
+
+
+@* @using (Html.BeginForm("AddQuestion", "Dashboard")) *@
+@* { *@
+@*     <div> *@
+@*         @Html.LabelFor(m => m.QuestionText) *@
+@*         @Html.TextBoxFor(m => m.QuestionText) *@
+@*     </div> *@
+@*      *@
+@*     <div> *@
+@*         @Html.LabelFor(m => m.Type) *@
+@*         @Html.TextBoxFor(m => m.Type) *@
+@*     </div> *@
+@*      *@
+@*     <h4>Answers:</h4> *@
+@*     <div> *@
+@*         <div> *@
+@*             @Html.LabelFor(m => m.Answers[0].Content) *@
+@*             @Html.TextBoxFor(m => m.Answers[0].Content) *@
+@*              *@
+@*             @Html.LabelFor(m => m.Answers[0].IsCorrect) *@
+@*             @Html.CheckBoxFor(m => m.Answers[0].IsCorrect) *@
+@*         </div> *@
+@*          *@
+@*         <div> *@
+@*             @Html.LabelFor(m => m.Answers[1].Content) *@
+@*             @Html.TextBoxFor(m => m.Answers[1].Content) *@
+@*              *@
+@*             @Html.LabelFor(m => m.Answers[1].IsCorrect) *@
+@*             @Html.CheckBoxFor(m => m.Answers[1].IsCorrect) *@
+@*         </div> *@
+@*     </div> *@
+@*      *@
+@*     <input type="submit" value="Submit" /> *@
+@* } *@
