@@ -9,4 +9,9 @@ public class AddQuestionModel
     public string? QuestionText { get; set; }
     public int Type { get; set; }
     public List<AnswerModel> Answers { get; set; }
+    public AddQuestionModel()
+    {
+        Answers = new List<AnswerModel>();
+    }
+    
 }

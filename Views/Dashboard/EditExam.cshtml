@@ -2,27 +2,13 @@
 
 @{
     ViewData["Title"] = "Edytuj test";
-    var questions = ViewBag.questions;
-    var answers = ViewBag.answers;
-}
-
-@{
-    foreach (var question in questions)
-    {
-        <h1>@question.QuestionText</h1>
-        foreach (var answer in answers)
-        {
-            if (answer.QuestionId == question.Id)
-            {
-                <span>@answer.Content</span>
-            }
-        }
-    }
 }
 
 <hr></hr>
-
-<a href="Edit/AddQuestion">
+<a href="Edit/Questions">
+    Pytania // TODO: Zrobić to
+</a>
+<a href="Edit/Questions/AddQuestion">
     Dodaj Pytanie
 </a>
 

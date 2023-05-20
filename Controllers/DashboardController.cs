@@ -63,54 +63,7 @@ public class DashboardController : Controller {
         ViewBag.ExamId = id;
         return View();
     }
-
-    [HttpPost]
-    [Route("Dashboard/CreateExam")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateExam(AddExamModel model) {
-        var examName = model.Name;
-        var examCategoryId = model.CategoryId;
-        var examCategoryName = model.CategoryName;
-
-        if (examName == null) return RedirectToAction("Index", "Dashboard");
-        
-        if (examCategoryName == null) {
-
-            var exam = new ExamModel() {
-                Name = examName,
-                CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
-                CategoryId = examCategoryId,
-                CreationTime = DateTime.Now,
-                Status = "Disabled"
-            };
-            
-            _dbContext.Exams.Add(exam);
-            await _dbContext.SaveChangesAsync();
-        }
-        else {
-            var examCategory = new ExamCategoryModel() {
-                CategoryName = examCategoryName,
-                UserId = HttpContext.Session.GetInt32("UserId")!.Value
-            };
-            
-            _dbContext.ExamCategories.Add(examCategory);
-            await _dbContext.SaveChangesAsync();
-
-            var exam = new ExamModel() {
-                Name = examName,
-                CreatorId = HttpContext.Session.GetInt32("UserId")!.Value,
-                CategoryId = examCategory.Id,
-                CreationTime = DateTime.Now,
-                Status = "Disabled"
-            };
-            
-            _dbContext.Exams.Add(exam);
-            await _dbContext.SaveChangesAsync();
-        }
-
-
-        return RedirectToAction("Index", "Dashboard");
-    }
+    
 
     [HttpGet]
     public async Task<IActionResult> GetUserCategories() {
@@ -124,78 +77,7 @@ public class DashboardController : Controller {
         
         return Json(new { data = categories});
     }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateCategory() {
-        
-        var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-        var json = Newtonsoft.Json.JsonConvert.DeserializeObject<AddExamCategoryModel>(requestBody);
-        
-        var categoryName = json?.CategoryName;
-
-        if (categoryName == null) return StatusCode(400);
-        if (categoryName.Length > 30) return StatusCode(400);
-        
-        var category = new ExamCategoryModel() {
-            CategoryName = categoryName,
-            UserId = HttpContext.Session.GetInt32("UserId")!.Value
-        };
-        
-        try {
-            _dbContext.ExamCategories.Add(category);
-            await _dbContext.SaveChangesAsync();
-        } catch (Exception E) {
-            return StatusCode(500);
-        }
-
-        return StatusCode(200);
-    }
-
-    [ExamIdValidator]
-    [HttpPost]
-    public async Task<IActionResult> AddQuestionApi()
-    {
-        var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-        var json = JsonConvert.DeserializeObject<JsonQuestionModel>(requestBody);
-        Console.WriteLine(json);
-        
-        var question = new QuestionModel()
-        {
-            QuestionText = json!.QuestionText,
-            Type = json.Type,
-            ExamId = HttpContext.Session.GetInt32("ExamId")
-        };
-        
-        _dbContext.Questions.Add(question);
-        await _dbContext.SaveChangesAsync();
-        
-        var qId = question.Id; // Pobierz prawidłowy identyfikator pytania
-        
-        int id = (int)HttpContext.Session.GetInt32("ExamId");
-        
-        foreach (var answer in json.Answers)
-        {
-            var answerEntity = new AnswerModel()
-            {
-                ExamId = HttpContext.Session.GetInt32("ExamId"),
-                QuestionId = qId, // Przypisz prawidłowy identyfikator pytania
-                Content = answer.Content,
-                IsCorrect = Convert.ToBoolean(answer.IsCorrect)
-            };
-        
-            _dbContext.Answers.Add(answerEntity);
-        }
-        
-        await _dbContext.SaveChangesAsync();
-        
-        var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
-        ViewBag.questions = questions;
-        var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
-        ViewBag.answers = answers;
-        
-        return Ok();
-    }
-
+    
     [ExamIdValidator]
     [Route("/Dashboard/Exam/{id:int}/Edit")]
     public async Task<IActionResult> EditExam(int id = -1) {
@@ -214,14 +96,26 @@ public class DashboardController : Controller {
         ViewBag.answers = answers;
         
         return View();
+        
     }
     
     [ExamIdValidator]
-    [Route("/Dashboard/Exam/{id:int}/Edit/AddQuestion")]
+    [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestion")]
     public async Task<IActionResult> AddQuestion(int id = -1)
     {
+        ViewBag.ExamId = id;
+        return View();
+    }
+    
+    [ExamIdValidator]
+    [Route("/Dashboard/Exam/{id:int}/Edit/Questions/")]
+    public async Task<IActionResult> Questions(int id = -1)
+    {
+        var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.questions = questions;
+        var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.answers = answers;
 
-        @ViewBag.ExamId = id;
         return View();
     }
 
