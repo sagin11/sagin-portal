@@ -133,4 +133,24 @@ public class ExamManagerController : Controller {
         // return Ok();
         return Redirect("/Dashboard/Exam/" + id + "/Edit/");
     }
+    
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
+    [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
+    [HttpPost]
+    public async Task<IActionResult> QuestionsSet(ExamConfigurationModel model, int id = -1) {
+        var randomizeQuestions = model.RandomizeQuestions;
+        var questionTime = model.QuestionTime;
+
+        var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+
+        examConfiguration.RandomizeQuestions = randomizeQuestions;
+        examConfiguration.QuestionTime = questionTime;
+
+        await _dbContext.SaveChangesAsync();
+        
+        ViewBag.configuration = examConfiguration!;
+        return View($"~/Views/Dashboard/QuestionsSet.cshtml");
+    }
+
+    
 }
