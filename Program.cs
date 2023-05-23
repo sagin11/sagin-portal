@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SaginPortal.Context;
+using SaginPortal.Packages;
 
 namespace SaginPortal;
 
@@ -14,7 +15,7 @@ internal abstract class Program
         var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
     
         builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(connectionString!));
-
+        builder.Services.AddScoped<ExamExistsValidatorAttribute>();
 
         builder.Services.AddSession(options => {
             options.Cookie.Name = ".MateckiWorker";

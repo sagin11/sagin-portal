@@ -42,7 +42,7 @@ public class DashboardController : Controller {
         return View();
     }
 
-    [ExamIdValidator]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("Dashboard/Exam/{id:int}")]
     public async Task<IActionResult> Exam(int id = -1) {
 
@@ -78,7 +78,7 @@ public class DashboardController : Controller {
         return Json(new { data = categories});
     }
     
-    [ExamIdValidator]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit")]
     public async Task<IActionResult> EditExam(int id = -1) {
         var test = await _dbContext.Exams
@@ -99,7 +99,7 @@ public class DashboardController : Controller {
         
     }
     
-    [ExamIdValidator]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestion")]
     public async Task<IActionResult> AddQuestion(int id = -1)
     {
@@ -107,7 +107,7 @@ public class DashboardController : Controller {
         return View();
     }
     
-    [ExamIdValidator]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/")]
     public async Task<IActionResult> Questions(int id = -1)
     {
@@ -116,6 +116,15 @@ public class DashboardController : Controller {
         var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
         ViewBag.answers = answers;
 
+        return View();
+    }
+    
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
+    [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
+    public async Task<IActionResult> QuestionsSet(int id = -1) {
+        var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+
+        ViewBag.configuration = examConfiguration!;
         return View();
     }
 

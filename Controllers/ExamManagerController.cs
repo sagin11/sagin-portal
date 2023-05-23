@@ -7,12 +7,10 @@ using SaginPortal.Packages;
 
 namespace SaginPortal.Controllers;
 
-public class ExamManagerController : Controller
-{
+public class ExamManagerController : Controller {
     private readonly AppDbContext _dbContext;
 
-    public ExamManagerController(AppDbContext dbContext)
-    {
+    public ExamManagerController(AppDbContext dbContext) {
         _dbContext = dbContext;
     }
 
@@ -61,8 +59,13 @@ public class ExamManagerController : Controller
                 CreationTime = DateTime.Now,
                 Status = "Disabled"
             };
-            
             _dbContext.Exams.Add(exam);
+            await _dbContext.SaveChangesAsync();
+            
+            _dbContext.ExamConfigurationModels.Add(new ExamConfigurationModel() {
+                ExamId = exam.Id,
+            });
+            
             await _dbContext.SaveChangesAsync();
         }
         else {
@@ -90,22 +93,20 @@ public class ExamManagerController : Controller
         return RedirectToAction("Index", "Dashboard");
     }
     
-    [ExamIdValidator]
+    
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [HttpPost]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestionPost")]
-    public async Task<IActionResult> AddQuestionPost(AddQuestionModel model, int id = -1)
-    {
+    public async Task<IActionResult> AddQuestionPost(AddQuestionModel model, int id = -1) {
         var answersList = model.Answers;
-        foreach (var answer in answersList)
-        {
+        foreach (var answer in answersList) {
             if (answer.Content == "" || answer.Content == null) return StatusCode(400);           
         }
 
         if (string.IsNullOrEmpty(model.QuestionText)) return StatusCode(400);
 
         
-        var question = new QuestionModel()
-        {
+        var question = new QuestionModel() {
             QuestionText = model.QuestionText,
             Type = model.Type,
             ExamId = id
@@ -132,8 +133,4 @@ public class ExamManagerController : Controller
         // return Ok();
         return Redirect("/Dashboard/Exam/" + id + "/Edit/");
     }
-
-    
-    
-    
 }
