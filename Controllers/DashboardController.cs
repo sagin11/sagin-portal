@@ -101,8 +101,7 @@ public class DashboardController : Controller {
     
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestion")]
-    public async Task<IActionResult> AddQuestion(int id = -1)
-    {
+    public async Task<IActionResult> AddQuestion(int id = -1) {
         ViewBag.ExamId = id;
         return View();
     }
@@ -123,7 +122,9 @@ public class DashboardController : Controller {
     [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
     public async Task<IActionResult> QuestionsSet(int id = -1) {
         var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+        var questionsCount = await _dbContext.Questions.Where(q => q.ExamId == id).CountAsync();
 
+        ViewBag.questionsCount = questionsCount;
         ViewBag.configuration = examConfiguration!;
         return View();
     }

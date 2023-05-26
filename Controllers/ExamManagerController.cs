@@ -111,7 +111,7 @@ public class ExamManagerController : Controller {
             Type = model.Type,
             ExamId = id
         };
-        
+
         _dbContext.Questions.Add(question);
         await _dbContext.SaveChangesAsync();
         
@@ -141,11 +141,17 @@ public class ExamManagerController : Controller {
     public async Task<IActionResult> QuestionsSet(ExamConfigurationModel model, int id = -1) {
         var randomizeQuestions = model.RandomizeQuestions;
         var questionTime = model.QuestionTime;
+        var questionsCount = model.QuestionCount;
 
         var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
 
-        examConfiguration.RandomizeQuestions = randomizeQuestions;
+        examConfiguration!.RandomizeQuestions = randomizeQuestions;
         examConfiguration.QuestionTime = questionTime;
+
+        if (randomizeQuestions) {
+            examConfiguration.QuestionCount = questionsCount;
+            // TODO: Wyświetlanie komunikatu o błędzie
+        }
 
         await _dbContext.SaveChangesAsync();
         

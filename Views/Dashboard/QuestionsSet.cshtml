@@ -16,7 +16,21 @@
 
     <br>
     
-    input#
+    @* TODO: Javascriptem dodawać poniższy input jeżeli zaznaczono opcję losowanie pytań i odpowiedzi *@
+    
+    <label for="questionsCount">Ilość pytań testu</label>
+    
+    @{
+        if (ViewBag.questionsCount > 0) {
+            <input type="number" id="questionsCount" asp-for="QuestionCount" min="1" max="@ViewBag.questionsCount">
+        }
+        else {
+            <input type="number" id="questionsCount" asp-for="QuestionCount" min="0" max="@ViewBag.questionsCount">
+            <p>Nie dodałeś żadnych pytań. Przejdź do konfiguracji pytań.</p>
+        }
+    }
+    
+    <br>
     
         
     <button type="submit">Zapisz</button>

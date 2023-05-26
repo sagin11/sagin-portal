@@ -11,12 +11,13 @@
     </script>
 <form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/AddQuestionPost" method="post">
   <label for="questionText">Treść pytania:</label>
-  <input type="text" id="questionText" name="QuestionText" required>
+  
+  <textarea name="QuestionText" id="questionText"></textarea>
   
   <label for="answers">Odpowiedzi:</label>
   <div id="answers">
     <div class="answer">
-      <input type="text" name="Answers[0].Content" required>
+      <textarea type="text" name="Answers[0].Content"></textarea>
       <input type="checkbox" name="Answers[0].IsCorrect"> Poprawna odpowiedź
     </div>
   </div>
@@ -35,11 +36,13 @@
     var answerDiv = document.createElement('div');
     answerDiv.classList.add('answer');
     
-    var answerInput = document.createElement('input');
-    answerInput.type = 'text';
-    answerInput.name = 'Answers[' + answerIndex + '].Content';
-    answerInput.required = true;
+    var hr = document.createElement('hr');
+    answersDiv.appendChild(hr);
     
+    var answerInput = document.createElement('textarea');
+
+    answerInput.name = 'Answers[' + answerIndex + '].Content';
+
     var correctCheckbox = document.createElement('input');
     correctCheckbox.type = 'checkbox';
     correctCheckbox.name = 'Answers[' + answerIndex + '].IsCorrect';
@@ -54,6 +57,14 @@
     answersDiv.appendChild(answerDiv);
     
     answerIndex++;
+    
+    tinymce.init({
+            selector: 'textarea',
+            plugins: 'wordcount',
+            toolbar: 'wordcount',
+            promotion: false,
+            branding: false,
+        });
   });
 </script>
 @* <form id="examForm"> *@

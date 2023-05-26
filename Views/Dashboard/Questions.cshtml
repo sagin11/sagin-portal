@@ -3,16 +3,23 @@
     var answers = ViewBag.answers;
 }
 
+@* TODO: Oddzielić pytania od innych np. zrobić jasniejsze tło *@
+
 @{
-    foreach (var question in questions)
-    {
-        <h1>@question.QuestionText</h1>
-        foreach (var answer in answers)
-        {
-            if (answer.QuestionId == question.Id)
-            {
-                <span>@answer.Content</span>
+    foreach (var question in questions) {
+        <div style="margin-top:20px; background: #fff;">
+            @Html.Raw(question.QuestionText)
+            @foreach (var answer in answers) {
+                    if (answer.QuestionId == question.Id) {
+                        if (answer.IsCorrect) {
+                            <div style="background: lightgreen">
+                                @Html.Raw(answer.Content)
+                            </div>    
+                        } else {
+                          @Html.Raw(answer.Content)  
+                        }
+                    }
             }
-        }
+        </div>
     }
 }
