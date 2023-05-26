@@ -131,9 +131,10 @@ public class ExamManagerController : Controller {
         await _dbContext.SaveChangesAsync();
 
         // return Ok();
-        return Redirect("/Dashboard/Exam/" + id + "/Edit/");
+        return Redirect($"/Dashboard/Exam/{id}/Edit/");
     }
     
+    [ValidateAntiForgeryToken]
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
     [HttpPost]

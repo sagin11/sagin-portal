@@ -1,4 +1,15 @@
-﻿<form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/AddQuestionPost" method="post">
+﻿<script src="https://c2132-static-g82files.sagin.pl/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'wordcount',
+        toolbar: 'wordcount',
+        promotion: false,
+        branding: false,
+    });
+    </script>
+<form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/AddQuestionPost" method="post">
   <label for="questionText">Treść pytania:</label>
   <input type="text" id="questionText" name="QuestionText" required>
   
