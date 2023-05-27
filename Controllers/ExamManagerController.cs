@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using SaginPortal.Context;
-using SaginPortal.Models;
 using SaginPortal.Models.ExamModels;
 using SaginPortal.Packages;
 
@@ -10,39 +8,35 @@ namespace SaginPortal.Controllers;
 
 public class ExamManagerController : Controller {
     private readonly AppDbContext _dbContext;
-    private readonly IWebHostEnvironment _hostEnvironment;
 
     public ExamManagerController(AppDbContext dbContext, IWebHostEnvironment hostEnvironment) {
         _dbContext = dbContext;
-        _hostEnvironment = hostEnvironment;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateCategory() {
-        
-        var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-        var json = Newtonsoft.Json.JsonConvert.DeserializeObject<AddExamCategoryModel>(requestBody);
-        
-        var categoryName = json?.CategoryName;
-
-        if (categoryName == null) return StatusCode(400);
-        if (categoryName.Length > 30) return StatusCode(400);
-        
-        var category = new ExamCategoryModel() {
-            CategoryName = categoryName,
-            UserId = HttpContext.Session.GetInt32("UserId")!.Value
-        };
-        
-        try {
-            _dbContext.ExamCategories.Add(category);
-            await _dbContext.SaveChangesAsync();
-        } catch (Exception E) {
-            return StatusCode(500);
-        }
-
-        return StatusCode(200);
     }
     
+        
+    [HttpGet]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
+    [Route("Dashboard/Exam/{id:int}")]
+    public async Task<IActionResult> ExamDetails(int id = -1) {
+
+        var test = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+        
+        if (test.Count <= 0) {
+            return RedirectToAction("Login", "Account");
+        }
+        
+        var exams = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+        var questions = await _dbContext.Questions.Where(t => t.ExamId == id).ToListAsync();
+        var answers = await _dbContext.Answers.Where(t => t.ExamId == id).ToListAsync();
+        ViewBag.exams = exams;
+        ViewBag.questions = questions;
+        ViewBag.answers = answers;
+        ViewBag.ExamId = id;
+        return View();
+    }
+
     [HttpPost]
     [Route("Dashboard/CreateExam")]
     [ValidateAntiForgeryToken]
@@ -96,114 +90,23 @@ public class ExamManagerController : Controller {
         return RedirectToAction("Index", "Dashboard");
     }
     
-    
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
-    [HttpPost]
-    [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestionPost")]
-    public async Task<IActionResult> AddQuestionPost(AddQuestionModel model, int id = -1) {
-        var answersList = model.Answers;
-        foreach (var answer in answersList) {
-            if (answer.Content == "" || answer.Content == null) return StatusCode(400);           
-        }
-
-        if (string.IsNullOrEmpty(model.QuestionText)) return StatusCode(400);
-
+    [Route("/Dashboard/Exam/{id:int}/Edit")]
+    public async Task<IActionResult> EditExam(int id = -1) {
+        var test = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
         
-        var question = new QuestionModel() {
-            QuestionText = model.QuestionText,
-            Type = model.Type,
-            ExamId = id
-        };
-
-        _dbContext.Questions.Add(question);
-        await _dbContext.SaveChangesAsync();
-        
-        var qId = question.Id; // Pobierz prawidłowy identyfikator pytania
-        
-        foreach (var answerEntity in answersList.Select(answer => new AnswerModel()
-                 {
-                     ExamId = id,
-                     QuestionId = qId,
-                     Content = answer.Content,
-                     IsCorrect = Convert.ToBoolean(answer.IsCorrect)
-                 }))
-        {
-            _dbContext.Answers.Add(answerEntity);
+        if (test.Count <= 0) {
+            return RedirectToAction("Login", "Account");
         }
         
-        await _dbContext.SaveChangesAsync();
-
-        // return Ok();
-        return Redirect($"/Dashboard/Exam/{id}/Edit/");
-    }
-    
-    [ValidateAntiForgeryToken]
-    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
-    [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
-    [HttpPost]
-    public async Task<IActionResult> QuestionsSet(ExamConfigurationModel model, int id = -1) {
-        var randomizeQuestions = model.RandomizeQuestions;
-        var questionTime = model.QuestionTime;
-        var questionsCount = model.QuestionCount;
-
-        var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
-
-        examConfiguration!.RandomizeQuestions = randomizeQuestions;
-        examConfiguration.QuestionTime = questionTime;
-
-        if (randomizeQuestions) {
-            examConfiguration.QuestionCount = questionsCount;
-            // TODO: Wyświetlanie komunikatu o błędzie
-        }
-
-        await _dbContext.SaveChangesAsync();
+        HttpContext.Session.SetInt32("ExamId", id);
+ 
+        var questions = await _dbContext.Questions.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.questions = questions;
+        var answers = await _dbContext.Answers.Where(q => q.ExamId == id).ToListAsync();
+        ViewBag.answers = answers;
         
-        ViewBag.configuration = examConfiguration!;
-        return View($"~/Views/Dashboard/QuestionsSet.cshtml");
-    }
-
-    [HttpPost]
-    [CheckLoginStatus]
-    public async Task<IActionResult> ImageUpload() {
-        var file = Request.Form.Files[0];
-
-        if (file.Length > 0 && file.Length <= 3145728) {
-            try {
-                var uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "uploads");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-                
-                var uniqueFileName = Guid.NewGuid() + "_" + file.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                try {
-                    var image = new UploadedImageModel() {
-                        OriginalFileName = file.FileName,
-                        FileName = uniqueFileName,
-                        FilePath = filePath,
-                        UploadDate = DateTime.Now,
-                        OwnerId = HttpContext.Session.GetInt32("UserId")
-                    };
-
-                    _dbContext.Add(image);
-                    await _dbContext.SaveChangesAsync();                
-                } catch (Exception e) { 
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-                
-                
-                await using var fileStream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(fileStream);
-                
-                
-                var baseUrl = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppUrl").Value;
-
-                return Json(new {location = baseUrl + "uploads/" + uniqueFileName});
-                
-            } catch (Exception e) {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        } else {
-            return Json(new {error = "No file found in request or file is too big (3MB)."});
-        }
+        return View();
     }
 }
