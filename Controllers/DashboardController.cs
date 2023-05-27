@@ -41,7 +41,7 @@ public class DashboardController : Controller {
 
         return View();
     }
-
+    
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("Dashboard/Exam/{id:int}")]
     public async Task<IActionResult> Exam(int id = -1) {

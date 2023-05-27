@@ -86,7 +86,7 @@
                                             } else {
                                                 document.querySelector(".examCategory").innerHTML = `
                                                 <select id="examCategory" class="form-control" name="CategoryId" required="required">
-                                                    @foreach (var category in categories) {
+                                                    @foreach (var category in categories ?? "") {
                                                         <option value="@category.Id">@category.CategoryName</option>
                                                     }
                                                 </select>`;
