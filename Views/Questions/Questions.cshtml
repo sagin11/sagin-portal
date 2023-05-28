@@ -8,7 +8,17 @@
 @{
     foreach (var question in questions) {
         <div style="margin-top:20px; background: #fff;">
-            @Html.Raw(question.QuestionText)
+            <div class="row">
+                <div class="col-8">
+                    @Html.Raw(question.QuestionText)
+                </div>
+                           
+                <div class="col-4">
+                    <a href="Questions/Delete/@question.Id">Wkurza Cie to pytanie?</a>
+                </div>
+                               
+            </div>
+
             @foreach (var answer in answers) {
                     if (answer.QuestionId == question.Id) {
                         if (answer.IsCorrect) {

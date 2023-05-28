@@ -2,8 +2,7 @@
 
 namespace SaginPortal.Models.ExamModels;
 
-public class AddQuestionModel
-{
+public class AddQuestionModel {
     public int Id { get; set; }
     public int ExamId { get; set; }
     public string? QuestionText { get; set; }

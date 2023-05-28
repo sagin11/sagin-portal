@@ -64,7 +64,7 @@ public class DashboardController : Controller {
         var randomizeQuestions = model.RandomizeQuestions;
         var questionTime = model.QuestionTime;
         var questionsCount = model.QuestionCount;
-
+        
         var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
 
         examConfiguration!.RandomizeQuestions = randomizeQuestions;
@@ -80,6 +80,4 @@ public class DashboardController : Controller {
         ViewBag.configuration = examConfiguration!;
         return View($"~/Views/Dashboard/QuestionsSet.cshtml");
     }
-
-
 }
