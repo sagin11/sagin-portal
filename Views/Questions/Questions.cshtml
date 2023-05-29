@@ -3,8 +3,6 @@
     var answers = ViewBag.answers;
 }
 
-@* TODO: Oddzielić pytania od innych np. zrobić jasniejsze tło *@
-
 @{
     foreach (var question in questions) {
         <div style="margin-top:20px; background: #fff;">
@@ -15,6 +13,8 @@
                            
                 <div class="col-4">
                     <a href="Questions/Delete/@question.Id">Wkurza Cie to pytanie?</a>
+                    <br>
+                    <a href="Questions/Edit/@question.Id">Edytuj pytanie</a>
                 </div>
                                
             </div>

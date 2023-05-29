@@ -28,14 +28,17 @@ public class QuestionsController : Controller {
     [HttpPost]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestionPost")]
     public async Task<IActionResult> AddQuestionPost(AddQuestionModel model, int id = -1) {
-        
-        // TODO: Sprawdzanie czy jakakolwiek odpowiedź jest zaznaczona jako poprawna
-        // TODO: Rework całej metody bo nie działa xd
         var answersList = model.Answers;
         foreach (var answer in answersList) {
             if (answer.Content == "" || answer.Content == null) return StatusCode(400);           
         }
         if (string.IsNullOrEmpty(model.QuestionText)) return StatusCode(400);
+        
+        bool isAnyCorrect = answersList.Any(answer => answer.IsCorrect);
+
+        if (!isAnyCorrect) {
+            return BadRequest("Nie zaznaczyleś żadnej poprawnej odpowiedzi!");
+        }
         
         var question = new QuestionModel() {
             QuestionText = model.QuestionText,
@@ -116,6 +119,10 @@ public class QuestionsController : Controller {
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/Edit/{questionId:int}")]
     public async Task<IActionResult> EditQuestion(AddQuestionModel model, int id = -1, int questionId = -1) {
+        bool isAnyCorrect = model.Answers.Any(answer => answer.IsCorrect);
+
+        if (!isAnyCorrect) return BadRequest("Nie zaznaczyleś żadnej poprawnej odpowiedzi!");
+        
         QuestionModel? question;
         try {
             question = await _dbContext.Questions.FirstAsync(q => q.Id == questionId);
