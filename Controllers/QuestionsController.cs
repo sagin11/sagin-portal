@@ -35,6 +35,12 @@ public class QuestionsController : Controller {
         }
         if (string.IsNullOrEmpty(model.QuestionText)) return StatusCode(400);
         
+        bool isAnyCorrect = answersList.Any(answer => answer.IsCorrect);
+
+        if (!isAnyCorrect) {
+            return BadRequest("Nie zaznaczyleś żadnej poprawnej odpowiedzi!");
+        }
+        
         var question = new QuestionModel() {
             QuestionText = model.QuestionText,
             Type = model.Type,
@@ -91,6 +97,10 @@ public class QuestionsController : Controller {
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/Questions/Edit/{questionId:int}")]
     public async Task<IActionResult> EditQuestion(AddQuestionModel model, int id = -1, int questionId = -1) {
+        bool isAnyCorrect = model.Answers.Any(answer => answer.IsCorrect);
+
+        if (!isAnyCorrect) return BadRequest("Nie zaznaczyleś żadnej poprawnej odpowiedzi!");
+        
         QuestionModel? question;
         try {
             question = await _dbContext.Questions.FirstAsync(q => q.Id == questionId);
