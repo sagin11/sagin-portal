@@ -135,54 +135,19 @@ public class QuestionsController : Controller {
         
         var existingAnswers = await _dbContext.Answers.Where(a => a.QuestionId == question.Id).ToListAsync();
     
-        if (existingAnswers.Count > model.Answers.Count) {
-            var answersToDelete = existingAnswers.Where(a => model.Answers.All(ma => ma.Content != a.Content));
-            foreach (var answer in answersToDelete) {
-                _dbContext.Answers.Remove(answer);
-            }
-        } else {
-            var existingAnswersList = await _dbContext.Answers.Where(a => a.ExamId == question.ExamId).ToListAsync();
-            foreach (var answerModel in model.Answers) {
-                foreach (var existingAnswer in existingAnswersList) {
-                    if (existingAnswer != null) {
-                        existingAnswer.Content = answerModel.Content;
-                        existingAnswer.IsCorrect = answerModel.IsCorrect;
-                        _dbContext.Answers.Update(existingAnswer);
-                    } else {
-                        var newAnswer = new AnswerModel {
-                            Content = answerModel.Content,
-                            IsCorrect = answerModel.IsCorrect,
-                            QuestionId = question.Id,
-                            ExamId = question.ExamId
-                        };
-                        _dbContext.Answers.Add(newAnswer);
-                    }
-                }
-            }  
+        foreach (var answer in existingAnswers) {
+            _dbContext.Answers.Remove(answer);
         }
         
-        await _dbContext.SaveChangesAsync();
+        foreach (var answerEntity in answersList.Select(answer => new AnswerModel() {
+                     ExamId = id,
+                     QuestionId = question.Id,
+                     Content = answer.Content,
+                     IsCorrect = Convert.ToBoolean(answer.IsCorrect)
+                 })) {
+            _dbContext.Answers.Add(answerEntity);
+        }
         
-        
-        // SPRAWDZAĆ CZY W model.Answers jest więcej odpowiedzi niż w existingAnswers jeżeli jest więcej no to dodajemy jeżeli nie to nadpisujemy
-        // USUWANIE ODPOWIEDZI W JAVASCRIPT JAKO JAKIEŚ API I REFRESHOWAĆ STAN PYTAŃ I ODPOWIEDZI
-        
-        // foreach (var answerModel in model.Answers) {
-        //     var existingAnswer = existingAnswers.FirstOrDefault(a => a.Content == answerModel.Content);
-        //     if (existingAnswer != null) {
-        //         existingAnswer.Content = answerModel.Content;
-        //         existingAnswer.IsCorrect = answerModel.IsCorrect;
-        //         _dbContext.Answers.Update(existingAnswer);
-        //     } else {
-        //         var newAnswer = new AnswerModel {
-        //             Content = answerModel.Content,
-        //             IsCorrect = answerModel.IsCorrect,
-        //             QuestionId = question.Id,
-        //             ExamId = question.ExamId
-        //         };
-        //         _dbContext.Answers.Add(newAnswer);
-        //     }
-        // }
 
         await _dbContext.SaveChangesAsync();
 

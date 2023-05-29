@@ -1,214 +1,171 @@
 ﻿<script src="https://c2132-static-g82files.sagin.pl/js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
-    
-<script>
 
+<script>
   const image_upload_handler_callback = (blobInfo, progress) => new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.withCredentials = false;
-      xhr.open('POST', '/ExamManager/ImageUpload');
-      
-      xhr.upload.onprogress = (e) => {
-          progress(e.loaded / e.total * 100);
-      };
-      
-      xhr.onload = () => {
-          if (xhr.status === 403) {
-              reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-              return;
-          }
-        
-          if (xhr.status < 200 || xhr.status >= 300) {
-              reject('HTTP Error: ' + xhr.status);
-              return;
-          }
-        
-          const json = JSON.parse(xhr.responseText);
-        
-          if (!json || typeof json.location != 'string') {
-              reject('Invalid JSON: ' + xhr.responseText);
-              return;
-          }
-        
-          resolve(json.location);
-      };
-      
-      xhr.onerror = () => {
-        reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-      };
-      
-      const formData = new FormData();
-      formData.append('file', blobInfo.blob(), blobInfo.filename());
-      
-      xhr.send(formData);
+    const xhr = new XMLHttpRequest();
+    xhr.withCredentials = false;
+    xhr.open('POST', '/ExamManager/ImageUpload');
+
+    xhr.upload.onprogress = (e) => {
+      progress(e.loaded / e.total * 100);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 403) {
+        reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+        return;
+      }
+
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject('HTTP Error: ' + xhr.status);
+        return;
+      }
+
+      const json = JSON.parse(xhr.responseText);
+
+      if (!json || typeof json.location != 'string') {
+        reject('Invalid JSON: ' + xhr.responseText);
+        return;
+      }
+
+      resolve(json.location);
+    };
+
+    xhr.onerror = () => {
+      reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+    };
+
+    const formData = new FormData();
+    formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+    xhr.send(formData);
   });
 
-    tinymce.init({
-        selector: 'textarea',
-        plugins: 'wordcount image code',
-        toolbar: 'undo redo | link image | code',
-        promotion: false,
-        branding: false,
-        
-        images_upload_handler: image_upload_handler_callback
-    });
-    </script>
+  tinymce.init({
+    selector: 'textarea',
+    plugins: 'wordcount image code',
+    toolbar: 'undo redo | link image | code',
+    promotion: false,
+    branding: false,
+
+    images_upload_handler: image_upload_handler_callback
+  });
+</script>
+
 <form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/Edit/@ViewBag.question.Id" method="post">
   <label for="questionText">Treść pytania:</label>
-  
   <textarea name="QuestionText" id="questionText">@ViewBag.question.QuestionText</textarea>
-  
+
   <label for="answers">Odpowiedzi:</label>
-    <div id="answers">
-        @{
-            var i = 0;
-            foreach (var answer in ViewBag.answers) {
-                <div class="answer">
-                    <textarea type="text" name="Answers[@i].Content">@answer.Content</textarea>
-                    @{
-                        if (answer.IsCorrect) {
-                            <input type="checkbox" name="Answers[@i].IsCorrect" checked value="True"><span>Poprawna odpowiedź</span>
-                        } else {
-                            <input type="checkbox" name="Answers[@i].IsCorrect" value="True"><span>Poprawna odpowiedź</span> 
-                        }
-                    }
-                </div>
-                i++;
+  <div id="answers">
+    @{
+      var i = 0;
+      foreach (var answer in ViewBag.answers) {
+        <div class="answer">
+          <textarea type="text" name="Answers[@i].Content">@answer.Content</textarea>
+          @{
+            if (answer.IsCorrect) {
+              <input type="checkbox" name="Answers[@i].IsCorrect" checked value="True"><span>Poprawna odpowiedź</span>
+            } else {
+              <input type="checkbox" name="Answers[@i].IsCorrect" value="True"><span>Poprawna odpowiedź</span>
             }
-        }
-        
-    </div>
-  
+          }
+          <button type="button" class="remove-answer-button">Usuń odpowiedź</button>
+        </div>
+        i++;
+      }
+    }
+  </div>
+
   <button type="button" id="addAnswerButton">Dodaj odpowiedź</button>
   <br>
   <button type="submit">Dodaj pytanie</button>
 </form>
 
-<script>
-  var answerIndex = 1;
+@{
+  if (ViewBag.answers.Count == 0) {
+    <script>let answerIndex = 0;</script>
+  } else if (ViewBag.answers.Count > 0) {
+    <script>let answerIndex = @ViewBag.answers.Count</script>
+  }
+}
 
-  document.getElementById('addAnswerButton').addEventListener('click', function() {
+<script>
+  document.getElementById('addAnswerButton').addEventListener('click', function () {
     var answersDiv = document.getElementById('answers');
-    
+
     var answerDiv = document.createElement('div');
     answerDiv.classList.add('answer');
-    
+
     var hr = document.createElement('hr');
     answersDiv.appendChild(hr);
-    
-    var answerInput = document.createElement('textarea');
 
+    var answerInput = document.createElement('textarea');
     answerInput.name = 'Answers[' + answerIndex + '].Content';
 
     var correctCheckbox = document.createElement('input');
     correctCheckbox.type = 'checkbox';
+    correctCheckbox.value = 'true';
     correctCheckbox.name = 'Answers[' + answerIndex + '].IsCorrect';
-    
+
     var label = document.createElement('label');
     label.appendChild(document.createTextNode(' Poprawna odpowiedź'));
     label.insertBefore(correctCheckbox, label.firstChild);
-    
+
     answerDiv.appendChild(answerInput);
     answerDiv.appendChild(label);
-    
+
+    var removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.classList.add('remove-answer-button');
+    removeButton.textContent = 'Usuń odpowiedź';
+    answerDiv.appendChild(removeButton);
+
     answersDiv.appendChild(answerDiv);
-    
+
     answerIndex++;
-    
+
     tinymce.init({
-            selector: 'textarea',
-            plugins: 'wordcount',
-            toolbar: 'wordcount',
-            promotion: false,
-            branding: false,
-        });
+      selector: 'textarea',
+      plugins: 'wordcount',
+      toolbar: 'wordcount',
+      promotion: false,
+      branding: false,
+    });
+
+    // Przypisanie obsługi zdarzenia dla przycisku "Usuń odpowiedź"
+    removeButton.addEventListener('click', function () {
+      var answerDiv = removeButton.parentNode;
+      var answerIndexToRemove = Array.from(answersDiv.children).indexOf(answerDiv);
+
+      answerDiv.remove();
+
+      // Aktualizacja wartości name odpowiedzi po usunięciu
+      var answerInputs = document.getElementsByName('Answers[' + answerIndexToRemove + '].Content');
+      for (var i = 0; i < answerInputs.length; i++) {
+        var answerInput = answerInputs[i];
+        answerInput.name = 'Answers[' + (answerIndexToRemove + i) + '].Content';
+      }
+
+      var answerCheckboxes = document.getElementsByName('Answers[' + answerIndexToRemove + '].IsCorrect');
+      for (var i = 0; i < answerCheckboxes.length; i++) {
+        var answerCheckbox = answerCheckboxes[i];
+        answerCheckbox.name = 'Answers[' + (answerIndexToRemove + i) + '].IsCorrect';
+      }
+
+      // Aktualizacja wartości name kolejnych odpowiedzi
+      var nextAnswerIndex = answerIndexToRemove + 1;
+      var nextAnswerInputs = document.getElementsByName('Answers[' + nextAnswerIndex + '].Content');
+      for (var i = 0; i < nextAnswerInputs.length; i++) {
+        var nextAnswerInput = nextAnswerInputs[i];
+        nextAnswerInput.name = 'Answers[' + (nextAnswerIndex - 1 + i) + '].Content';
+      }
+
+      var nextAnswerCheckboxes = document.getElementsByName('Answers[' + nextAnswerIndex + '].IsCorrect');
+      for (var i = 0; i < nextAnswerCheckboxes.length; i++) {
+        var nextAnswerCheckbox = nextAnswerCheckboxes[i];
+        nextAnswerCheckbox.name = 'Answers[' + (nextAnswerIndex - 1 + i) + '].IsCorrect';
+      }
+    });
   });
 </script>
-@* <form id="examForm"> *@
-@*         <label for="question">Question:</label> *@
-@*         <input type="text" id="question" required><br><br> *@
-@*          *@
-@*         <label for="type">Type:</label> *@
-@*         <select id="type" required> *@
-@*             <option value="0">Zamknięte</option> *@
-@*             <option value="1">Wielokrotnego wyboru</option> *@
-@*             <option value="2">Krótka odpowiedź - NIE DZIAŁA</option> *@
-@*             <option value="3">Opisowe - NIE DZIAŁA</option> *@
-@*         </select><br><br> *@
-@*          *@
-@*         <div id="answersContainer"> *@
-@*             <label for="answer">Answer 1:</label> *@
-@*             <input type="text" class="answerInput" required> *@
-@*             <input type="checkbox" class="correctAnswerCheckbox" checked><br><br> *@
-@*         </div> *@
-@*          *@
-@*         <button type="button" id="addAnswerButton">Add Answer</button><br><br> *@
-@*          *@
-@*         <input type="submit" value="Generate JSON"> *@
-@*     </form> *@
-@* *@
-@* <script> *@
-@*         document.getElementById('addAnswerButton').addEventListener('click', function () { *@
-@*             let answersContainer = document.getElementById('answersContainer'); *@
-@*              *@
-@*             let answerNumber = document.getElementsByClassName('answerInput').length + 1; *@
-@*              *@
-@*             let answerLabel = document.createElement('label'); *@
-@*             answerLabel.setAttribute('for', 'answer'); *@
-@*             answerLabel.textContent = 'Answer ' + answerNumber + ':'; *@
-@*             answersContainer.appendChild(answerLabel); *@
-@*              *@
-@*             let answerInput = document.createElement('input'); *@
-@*             answerInput.setAttribute('type', 'text'); *@
-@*             answerInput.setAttribute('class', 'answerInput'); *@
-@*             answerInput.required = true; *@
-@*             answersContainer.appendChild(answerInput); *@
-@*              *@
-@*             let correctAnswerCheckbox = document.createElement('input'); *@
-@*             correctAnswerCheckbox.setAttribute('type', 'checkbox'); *@
-@*             correctAnswerCheckbox.setAttribute('class', 'correctAnswerCheckbox'); *@
-@*             correctAnswerCheckbox.checked = true; *@
-@*             answersContainer.appendChild(correctAnswerCheckbox); *@
-@*              *@
-@*             let lineBreak = document.createElement('br'); *@
-@*             answersContainer.appendChild(lineBreak); *@
-@*         }); *@
-@* *@
-@*         document.getElementById('examForm').addEventListener('submit', function (event) { *@
-@*             event.preventDefault(); *@
-@*              *@
-@*             let question = document.getElementById('question').value; *@
-@*             let type = document.getElementById('type').value; *@
-@*              *@
-@*             let answers = []; *@
-@*             let answerInputs = document.getElementsByClassName('answerInput'); *@
-@*             let correctAnswerCheckboxes = document.getElementsByClassName('correctAnswerCheckbox'); *@
-@*              *@
-@*             for (let i = 0; i < answerInputs.length; i++) { *@
-@*                 let answer = { *@
-@*                     IsCorrect: correctAnswerCheckboxes[i].checked ? 1 : 0, *@
-@*                     Content: answerInputs[i].value *@
-@*                 }; *@
-@*                 answers.push(answer); *@
-@*             } *@
-@*              *@
-@*             let exam = { *@
-@*                 ExamId: 1, *@
-@*                 QuestionText: question, *@
-@*                 Type: parseInt(type), *@
-@*                 Answers: answers *@
-@*             }; *@
-@*              *@
-@*             let examJSON = JSON.stringify(exam); *@
-@*             fetch("/Dashboard/AddQuestionApi", { *@
-@*                 headers: { *@
-@*                     "Content-Type": "application/json" *@
-@*                 }, *@
-@*                 method: "POST", *@
-@*                 body: examJSON *@
-@*             }).then(function (response) { *@
-@*                 window.location.href = "/Dashboard/Exam/@ViewBag.ExamId/Edit"; *@
-@*             }).then(function (data) { *@
-@*                 window.location.href = "/Dashboard/Exam/@ViewBag.ExamId/Edit"; *@
-@*             }); *@
-@*         }); *@
-@*     </script> *@
