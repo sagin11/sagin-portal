@@ -52,27 +52,78 @@
         images_upload_handler: image_upload_handler_callback
     });
     </script>
-<form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/AddQuestionPost" method="post">
-  <label for="questionText">Treść pytania:</label>
+<form action="@ViewBag.formUrl" method="post">
+    <label for="questionText">Treść pytania:</label>
+
+    <textarea name="QuestionText" id="questionText" style="width: 60%">@(ViewBag.question?.QuestionText ?? "")</textarea>
   
-  <textarea name="QuestionText" id="questionText"></textarea>
-  
-  <label for="answers">Odpowiedzi:</label>
-  <div id="answers">
-    <div class="answer">
-      <textarea type="text" name="Answers[0].Content"></textarea>
-      <input type="checkbox" name="Answers[0].IsCorrect" value="True"> Poprawna odpowiedź
+    <select name="answerType" id="">
+        <option value="0">Pojedynczy wybór</option>
+        <option value="1">Wielokrotny wybór</option>
+        <option value="2">Krótka odpowiedź (automatyczne sprawdzanie)</option>
+        <option value="3">Dłuższa odpowiedź (ręczne sprawdzanie)</option>
+    </select>
+    
+    <br>
+    
+    <label for="answers">Odpowiedzi:</label>
+    <div id="answers">
+        @{
+            if (ViewBag.answers != null) {
+                var i = 0;
+                foreach (var answer in ViewBag.answers) {
+                    <div class="answer">
+                        <textarea type="text" name="Answers[@i].Content">@answer.Content</textarea>
+                        @{
+                            if (answer.IsCorrect) {
+                                <input type="checkbox" name="Answers[@i].IsCorrect" checked value="True">
+                                <span>Poprawna odpowiedź</span>
+                            }
+                            else {
+                                <input type="checkbox" name="Answers[@i].IsCorrect" value="True">
+                                <span>Poprawna odpowiedź</span>
+                            }
+                        }
+                        <button type="button" class="remove-answer-button">Usuń odpowiedź</button>
+                    </div>
+                    i++;
+                }
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    <div class="answer">
+                        <textarea type="text" name="Answers[@i].Content"></textarea>
+                        <input type="checkbox" name="Answers[@i].IsCorrect" value="True">
+                        <span>Poprawna odpowiedź</span>
+                                                    
+                    </div>
+                }
+            }
+        }
     </div>
-  </div>
-  
-  <button type="button" id="addAnswerButton">Dodaj odpowiedź</button>
-  <br>
-  <button type="submit">Dodaj pytanie</button>
+    
+    <button type="button" id="addAnswerButton">Dodaj odpowiedź</button>
+    <br>
+    <button type="submit">Dodaj pytanie</button>
+    
+    <h3>Zarządzanie punktacją</h3>
+    <label for="points">Ilość punktów za udzielenie poprawnej odpowiedzi.</label>
+    <input type="number" id="points">
+    
+    <p>Wyświetl maksymalną liczbę punktów możliwych do zdobycia za to pytanie.</p>
+    <input type="checkbox">
+    
 </form>
 
-<script>
-  var answerIndex = 1;
+@{
+    if (ViewBag.answers == null) {
+        <script>var answerIndex = 3;</script>
+    }
+    else {
+        <script>var answerIndex = 1;</script>
+    }
+}
 
+<script>
   document.getElementById('addAnswerButton').addEventListener('click', function() {
     var answersDiv = document.getElementById('answers');
     
@@ -110,6 +161,7 @@
             branding: false,
         });
   });
+
 </script>
 @* <form id="examForm"> *@
 @*         <label for="question">Question:</label> *@
