@@ -52,18 +52,31 @@
         images_upload_handler: image_upload_handler_callback
     });
     </script>
-<form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/AddQuestionPost" method="post">
+<form action="/Dashboard/Exam/@ViewBag.ExamId/Edit/Questions/Edit/@ViewBag.question.Id" method="post">
   <label for="questionText">Treść pytania:</label>
   
-  <textarea name="QuestionText" id="questionText"></textarea>
+  <textarea name="QuestionText" id="questionText">@ViewBag.question.QuestionText</textarea>
   
   <label for="answers">Odpowiedzi:</label>
-  <div id="answers">
-    <div class="answer">
-      <textarea type="text" name="Answers[0].Content"></textarea>
-      <input type="checkbox" name="Answers[0].IsCorrect" value="True"> Poprawna odpowiedź
+    <div id="answers">
+        @{
+            var i = 0;
+            foreach (var answer in ViewBag.answers) {
+                <div class="answer">
+                    <textarea type="text" name="Answers[@i].Content">@answer.Content</textarea>
+                    @{
+                        if (answer.IsCorrect) {
+                            <input type="checkbox" name="Answers[@i].IsCorrect" checked value="True"><span>Poprawna odpowiedź</span>
+                        } else {
+                            <input type="checkbox" name="Answers[@i].IsCorrect" value="True"><span>Poprawna odpowiedź</span> 
+                        }
+                    }
+                </div>
+                i++;
+            }
+        }
+        
     </div>
-  </div>
   
   <button type="button" id="addAnswerButton">Dodaj odpowiedź</button>
   <br>
@@ -88,7 +101,6 @@
 
     var correctCheckbox = document.createElement('input');
     correctCheckbox.type = 'checkbox';
-    correctCheckbox.value = 'True';
     correctCheckbox.name = 'Answers[' + answerIndex + '].IsCorrect';
     
     var label = document.createElement('label');
