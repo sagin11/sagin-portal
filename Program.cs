@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SaginPortal.Context;
+using SaginPortal.Models;
 using SaginPortal.Packages;
 
 namespace SaginPortal;
@@ -23,6 +24,8 @@ internal abstract class Program
             options.IdleTimeout = TimeSpan.FromDays(30);
         });
         
+        builder.Services.Configure<AppUrls>(builder.Configuration.GetSection("AppUrls"));
+                
         var app = builder.Build();
         
         if (!app.Environment.IsDevelopment())

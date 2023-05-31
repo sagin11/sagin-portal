@@ -47,7 +47,7 @@ public class ImageController : Controller {
                 await file.CopyToAsync(fileStream);
                 
                 
-                var baseUrl = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppUrl").Value;
+                var baseUrl = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppUrls").Value;
 
                 return Json(new {location = baseUrl + "uploads/" + uniqueFileName});
                 

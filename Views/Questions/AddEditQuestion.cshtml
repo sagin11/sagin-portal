@@ -107,7 +107,7 @@
     
     <h3>Zarządzanie punktacją</h3>
     <label for="points">Ilość punktów za udzielenie poprawnej odpowiedzi.</label>
-    <input type="number" id="points">
+    <input type="number" id="points" name="Points" value="@(ViewBag.question?.Points ?? 1   )">
     
     <p>Wyświetl maksymalną liczbę punktów możliwych do zdobycia za to pytanie.</p>
     <input type="checkbox">
@@ -163,92 +163,3 @@
   });
 
 </script>
-@* <form id="examForm"> *@
-@*         <label for="question">Question:</label> *@
-@*         <input type="text" id="question" required><br><br> *@
-@*          *@
-@*         <label for="type">Type:</label> *@
-@*         <select id="type" required> *@
-@*             <option value="0">Zamknięte</option> *@
-@*             <option value="1">Wielokrotnego wyboru</option> *@
-@*             <option value="2">Krótka odpowiedź - NIE DZIAŁA</option> *@
-@*             <option value="3">Opisowe - NIE DZIAŁA</option> *@
-@*         </select><br><br> *@
-@*          *@
-@*         <div id="answersContainer"> *@
-@*             <label for="answer">Answer 1:</label> *@
-@*             <input type="text" class="answerInput" required> *@
-@*             <input type="checkbox" class="correctAnswerCheckbox" checked><br><br> *@
-@*         </div> *@
-@*          *@
-@*         <button type="button" id="addAnswerButton">Add Answer</button><br><br> *@
-@*          *@
-@*         <input type="submit" value="Generate JSON"> *@
-@*     </form> *@
-@* *@
-@* <script> *@
-@*         document.getElementById('addAnswerButton').addEventListener('click', function () { *@
-@*             let answersContainer = document.getElementById('answersContainer'); *@
-@*              *@
-@*             let answerNumber = document.getElementsByClassName('answerInput').length + 1; *@
-@*              *@
-@*             let answerLabel = document.createElement('label'); *@
-@*             answerLabel.setAttribute('for', 'answer'); *@
-@*             answerLabel.textContent = 'Answer ' + answerNumber + ':'; *@
-@*             answersContainer.appendChild(answerLabel); *@
-@*              *@
-@*             let answerInput = document.createElement('input'); *@
-@*             answerInput.setAttribute('type', 'text'); *@
-@*             answerInput.setAttribute('class', 'answerInput'); *@
-@*             answerInput.required = true; *@
-@*             answersContainer.appendChild(answerInput); *@
-@*              *@
-@*             let correctAnswerCheckbox = document.createElement('input'); *@
-@*             correctAnswerCheckbox.setAttribute('type', 'checkbox'); *@
-@*             correctAnswerCheckbox.setAttribute('class', 'correctAnswerCheckbox'); *@
-@*             correctAnswerCheckbox.checked = true; *@
-@*             answersContainer.appendChild(correctAnswerCheckbox); *@
-@*              *@
-@*             let lineBreak = document.createElement('br'); *@
-@*             answersContainer.appendChild(lineBreak); *@
-@*         }); *@
-@* *@
-@*         document.getElementById('examForm').addEventListener('submit', function (event) { *@
-@*             event.preventDefault(); *@
-@*              *@
-@*             let question = document.getElementById('question').value; *@
-@*             let type = document.getElementById('type').value; *@
-@*              *@
-@*             let answers = []; *@
-@*             let answerInputs = document.getElementsByClassName('answerInput'); *@
-@*             let correctAnswerCheckboxes = document.getElementsByClassName('correctAnswerCheckbox'); *@
-@*              *@
-@*             for (let i = 0; i < answerInputs.length; i++) { *@
-@*                 let answer = { *@
-@*                     IsCorrect: correctAnswerCheckboxes[i].checked ? 1 : 0, *@
-@*                     Content: answerInputs[i].value *@
-@*                 }; *@
-@*                 answers.push(answer); *@
-@*             } *@
-@*              *@
-@*             let exam = { *@
-@*                 ExamId: 1, *@
-@*                 QuestionText: question, *@
-@*                 Type: parseInt(type), *@
-@*                 Answers: answers *@
-@*             }; *@
-@*              *@
-@*             let examJSON = JSON.stringify(exam); *@
-@*             fetch("/Dashboard/AddQuestionApi", { *@
-@*                 headers: { *@
-@*                     "Content-Type": "application/json" *@
-@*                 }, *@
-@*                 method: "POST", *@
-@*                 body: examJSON *@
-@*             }).then(function (response) { *@
-@*                 window.location.href = "/Dashboard/Exam/@ViewBag.ExamId/Edit"; *@
-@*             }).then(function (data) { *@
-@*                 window.location.href = "/Dashboard/Exam/@ViewBag.ExamId/Edit"; *@
-@*             }); *@
-@*         }); *@
-@*     </script> *@

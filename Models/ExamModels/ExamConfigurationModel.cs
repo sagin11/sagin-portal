@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace SaginPortal.Models.ExamModels; 
 
@@ -13,4 +12,10 @@ public class ExamConfigurationModel {
     public int? QuestionCount { get; set; }
     public bool RandomizeQuestions { get; set; }
     public TimeSpan QuestionTime { get; set; }
+    public string? ExamUrl { get; set; }
+    public bool FirstName { get; set; }
+    public bool LastName { get; set; }
+    public bool Class { get; set; }
+    public bool NumberInLogbook { get; set; }
+    
 }

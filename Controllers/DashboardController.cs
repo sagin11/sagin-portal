@@ -46,7 +46,7 @@ public class DashboardController : Controller {
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Edit/QuestionsSet")]
     public async Task<IActionResult> QuestionsSet(int id = -1) {
-        var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+        var examConfiguration = await _dbContext.ExamConfiguration.Where(e => e.ExamId == id).FirstOrDefaultAsync();
         var questionsCount = await _dbContext.Questions.Where(q => q.ExamId == id).CountAsync();
 
         ViewBag.questionsCount = questionsCount;
@@ -65,7 +65,7 @@ public class DashboardController : Controller {
         var questionTime = model.QuestionTime;
         var questionsCount = model.QuestionCount;
         
-        var examConfiguration = await _dbContext.ExamConfigurationModels.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+        var examConfiguration = await _dbContext.ExamConfiguration.Where(e => e.ExamId == id).FirstOrDefaultAsync();
 
         examConfiguration!.RandomizeQuestions = randomizeQuestions;
         examConfiguration.QuestionTime = questionTime;

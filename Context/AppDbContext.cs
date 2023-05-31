@@ -13,7 +13,7 @@ public class AppDbContext : DbContext {
     // public DbSet<AddQuestionModel> AddQuestions { get; set; }
     public DbSet<ExamModel> Exams { get; set; }
     public DbSet<ExamCategoryModel> ExamCategories { get; set; }
-    public DbSet<ExamConfigurationModel> ExamConfigurationModels { get; set; }
+    public DbSet<ExamConfigurationModel> ExamConfiguration { get; set; }
     public DbSet<UploadedImageModel> UploadedImageModels { get; set; }
     
 

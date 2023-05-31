@@ -58,12 +58,22 @@ public class ExamManagerController : Controller {
             };
             _dbContext.Exams.Add(exam);
             await _dbContext.SaveChangesAsync();
-            
-            _dbContext.ExamConfigurationModels.Add(new ExamConfigurationModel() {
-                ExamId = exam.Id,
-            });
-            
-            await _dbContext.SaveChangesAsync();
+
+            var baseUrl = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("AppUrls").Value;
+
+            while (true) {
+                try {
+                    _dbContext.ExamConfiguration.Add(new ExamConfigurationModel() {
+                        ExamId = exam.Id,
+                        ExamUrl = $"{baseUrl}Exam/{new RandomStringGenerator().GenerateRandomString()}"
+                    });
+                    await _dbContext.SaveChangesAsync();
+                    break;
+                }
+                catch (Exception e) {
+                    continue;
+                }        
+            }
         }
         else {
             var examCategory = new ExamCategoryModel() {
@@ -109,4 +119,26 @@ public class ExamManagerController : Controller {
         
         return View();
     }
+
+    [HttpGet]
+    [CheckLoginStatus]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
+    [Route("/Dashboard/Exam/{id:int}/Edit/AccessSettings")]
+    public async Task<IActionResult> AccessSettings(int id = -1) {
+        var exam = await _dbContext.Exams
+            .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
+
+        var examConfiguration = await _dbContext.ExamConfiguration.Where(e => e.ExamId == id).FirstOrDefaultAsync();
+
+        if (examConfiguration == null) {
+            return StatusCode(403);
+        }
+        
+        ViewBag.examUrl = examConfiguration.ExamUrl;
+        ViewBag.exam = exam;
+        
+        
+        return View();
+    }
+    
 }

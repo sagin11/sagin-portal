@@ -21,13 +21,13 @@ public class QuestionsController : Controller {
         ViewBag.ExamId = id;
         var model = new AddQuestionModel();
         model.Answers = new List<AnswerModel>();
-        ViewBag.formUrl = $"/Dashboard/Exam/{ViewBag.ExamId}/Edit/Questions/AddQuestion";
+        ViewBag.formUrl = $"/Dashboard/Exam/{ViewBag.ExamId}/Edit/Questions/AddQuestionPost";
         return View($"~/Views/Questions/AddEditQuestion.cshtml", model);
     }
     
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [HttpPost]
-    [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestion")]
+    [Route("/Dashboard/Exam/{id:int}/Edit/Questions/AddQuestionPost")]
     public async Task<IActionResult> AddQuestionPost(AddQuestionModel model, int id = -1) {
         var answersList = model.Answers;
         foreach (var answer in answersList) {
@@ -44,7 +44,8 @@ public class QuestionsController : Controller {
         var question = new QuestionModel() {
             QuestionText = model.QuestionText,
             Type = model.Type,
-            ExamId = id
+            ExamId = id,
+            Points = model.Points
         };
         
         _dbContext.Questions.Add(question);
@@ -82,13 +83,14 @@ public class QuestionsController : Controller {
         var model = new AddQuestionModel() {
             QuestionText = question.QuestionText,
             Type = question.Type,
+            Points = question.Points,
             Answers = answers
         };
         ViewBag.ExamId = id;
         ViewBag.question = question;
         ViewBag.answers = answers;
         
-        ViewBag.formUrl = $"/Dashboard/Exam/{ViewBag.ExamId}/Edit/Questions/AddQuestion";
+        ViewBag.formUrl = $"/Dashboard/Exam/{ViewBag.ExamId}/Edit/Questions/Edit/{questionId}";
         return View($"~/Views/Questions/AddEditQuestion.cshtml", model);
     }
 
@@ -115,6 +117,7 @@ public class QuestionsController : Controller {
         
         question!.QuestionText = model.QuestionText;
         question.Type = model.Type;
+        question.Points = model.Points;
         
         _dbContext.Questions.Update(question);
         
@@ -133,7 +136,6 @@ public class QuestionsController : Controller {
             _dbContext.Answers.Add(answerEntity);
         }
         
-
         await _dbContext.SaveChangesAsync();
 
         return Redirect("/Dashboard/Exam/" + id + "/Edit");
