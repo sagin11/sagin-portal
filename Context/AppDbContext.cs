@@ -15,6 +15,8 @@ public class AppDbContext : DbContext {
     public DbSet<ExamCategoryModel> ExamCategories { get; set; }
     public DbSet<ExamConfigurationModel> ExamConfiguration { get; set; }
     public DbSet<UploadedImageModel> UploadedImageModels { get; set; }
+    public DbSet<StudentInfoModel> StudentsInfo { get; set; }
+    public DbSet<ResponseModel> Responses { get; set; }
     
 
 }

@@ -1,0 +1,31 @@
+@{
+    Layout = null;
+}
+
+<h1>Witaj w środowisku testowym SaginPortal</h1>
+<p>W każdym teście używamy technologi, która sprawdza uczciwość zdającego.</p>
+
+<h2>@ViewBag.Exam.Name</h2>
+<form action="/Exam" method="post">
+    
+@{
+    if (ViewBag.ExamConfiguration.FirstName) {
+        <input type="text" placeholder="Imię" name="FirstName"/>
+    }
+
+    if (ViewBag.ExamConfiguration.LastName) {
+        <input type="text" placeholder="Nazwisko" name="LastName"/>
+    }
+
+    if (ViewBag.ExamConfiguration.Class) {
+        <input type="text" placeholder="Klasa" name="Class"/>
+    }
+    
+    if (ViewBag.ExamConfiguration.NumberInLogbook) {
+        <input type="text" placeholder="Numer w dzienniku" name="NumberInLogbook"/>
+    }
+}
+
+    <input type="submit" value="Rozpocznij rzeź HAHAHA"/>
+
+</form>

@@ -6,6 +6,7 @@ using SaginPortal.Packages;
 
 namespace SaginPortal.Controllers;
 
+// TODO: Sprawdzanie czy test jest aktywny, jeżeli jest to wtedy nie można dodawać pytań.
 public class ExamManagerController : Controller {
     private readonly AppDbContext _dbContext;
 
@@ -71,7 +72,7 @@ public class ExamManagerController : Controller {
                     break;
                 }
                 catch (Exception e) {
-                    continue;
+                    Console.WriteLine("Exception: " + e.Message);
                 }        
             }
         }
@@ -139,6 +140,24 @@ public class ExamManagerController : Controller {
         
         
         return View();
+    }
+
+    [HttpGet]
+    [CheckLoginStatus]
+    [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
+    [Route("/Dashboard/Exam/{id:int}/Activate")]
+    public async Task<IActionResult> EnableTest(int id = -1) {
+        var exam = _dbContext.Exams.Where(e => e.Id == id).FirstOrDefault();
+        
+        if (exam == null) {
+            return StatusCode(403);
+        }
+        
+        exam.Status = "Active";
+        _dbContext.Exams.Update(exam);
+        await _dbContext.SaveChangesAsync();
+        
+        return RedirectToAction("ExamDetails", "ExamManager", new {id});
     }
     
 }
