@@ -31,6 +31,7 @@ public class ExamController : Controller {
         ViewBag.ExamConfiguration = examConfiguration;
         
         HttpContext.Session.SetInt32("ExamId", exam.Id);
+        HttpContext.Session.SetString("ExamName", exam.Name);
         
         return View();
     }
@@ -55,40 +56,106 @@ public class ExamController : Controller {
         
         await _dbContext.SaveChangesAsync();
 
-        Console.WriteLine(examConfiguration.RandomizeQuestions);
+        List<QuestionModel> questions;
         
-        if (examConfiguration.RandomizeQuestions) {
-            var questions = await new ShuffleList(_dbContext).Shuffle(examId.Value);
-
-            foreach (var question in questions) {
-                _dbContext.Responses.Add(new ResponseModel() {
-                    ExamId = examId.Value,
-                    QuestionId = question.Id,
-                    StudentId = studentInfo.Entity.Id
-                });
-            }
-        } else {
-            var questions = await _dbContext.Questions.Where(q => q.ExamId == examId).ToListAsync();
-            foreach (var question in questions) {
-                _dbContext.Responses.Add(new ResponseModel() {
-                    ExamId = examId.Value,
-                    QuestionId = question.Id,
-                    StudentId = studentInfo.Entity.Id
-                });
-            }
+        if (examConfiguration.RandomizeQuestions) 
+            questions = await new ShuffleList(_dbContext).Shuffle(examId.Value);
+        else questions = await _dbContext.Questions.Where(q => q.ExamId == examId).ToListAsync();
+        
+        foreach (var question in questions) {
+            var response = await _dbContext.Responses.AddAsync(new ResponseModel() {
+                ExamId = examId.Value,
+                QuestionId = question.Id,
+                StudentId = studentInfo.Entity.Id
+            });
+            
         }
-        
-        await _dbContext.SaveChangesAsync();
-        
-        HttpContext.Session.SetInt32("StudnetId", studentInfo.Entity.Id);
 
+        await _dbContext.SaveChangesAsync();
+
+        var first = await _dbContext.Responses.FirstAsync(e => e.StudentId == studentInfo.Entity.Id);
+        var last = await _dbContext.Responses
+            .Where(e => e.StudentId == studentInfo.Entity.Id)
+            .OrderByDescending(e => e.Id)
+            .FirstAsync();
+
+        HttpContext.Session.SetInt32("StudnetId", studentInfo.Entity.Id);
+        HttpContext.Session.SetInt32("FirstResponseId", first.Id);
+        HttpContext.Session.SetInt32("CurrentResponseId", first.Id);
+        HttpContext.Session.SetInt32("LastResponseId", last.Id);
         return RedirectToAction("ExamStarted", "Exam");
     }
 
     [HttpGet]
     [Route("/ExamStarted")]
     public async Task<IActionResult> ExamStarted() {
-        // TODO: Trzeba przechowywać w sesji listę id z Responses, które są posortowane (pytania mogą być wylosowane).
+        var examId = HttpContext.Session.GetInt32("ExamId");
+        var studentId = HttpContext.Session.GetInt32("StudnetId");
+        var firstResponseId = HttpContext.Session.GetInt32("FirstResponseId");
+        var currentResponseId = HttpContext.Session.GetInt32("CurrentResponseId");
+        var lastResponseId = HttpContext.Session.GetInt32("LastResponseId");
+        
+        
+        var examName = HttpContext.Session.GetString("ExamName");
+        
+        if (examName == null || studentId == null) {
+            HttpContext.Session.Clear();
+            return BadRequest();
+        }
+        
+        var response = await _dbContext.Responses.FirstAsync(r => r.Id == currentResponseId);
+        var question = await _dbContext.Questions.FirstAsync(q => q.Id == response.QuestionId);
+        var answers = await _dbContext.Answers.Where(a => a.QuestionId == question.Id).ToListAsync();
+        
+        ViewBag.examName = examName;
+        ViewBag.question = question;
+        ViewBag.answers = answers;
+
+        return View();
+    }
+
+    [HttpPost]
+    [Route("/ExamStarted")]
+    public async Task<IActionResult> ExamStarted(SubmitQuestionModel model) {
+        var examId = HttpContext.Session.GetInt32("ExamId");
+        var studentId = HttpContext.Session.GetInt32("StudnetId");
+        var firstResponseId = HttpContext.Session.GetInt32("FirstResponseId");
+        var currentResponseId = HttpContext.Session.GetInt32("CurrentResponseId");
+        var lastResponseId = HttpContext.Session.GetInt32("LastResponseId");
+
+        var examName = HttpContext.Session.GetString("ExamName");
+        
+        if (examName == null || studentId == null) {
+            HttpContext.Session.Clear();
+            return BadRequest();
+        }
+        
+        var response = await _dbContext.Responses.FirstAsync(r => r.Id == currentResponseId);
+        response.Response = model.answerContent;
+        await _dbContext.SaveChangesAsync();
+
+        currentResponseId = currentResponseId!.Value + 1;
+        if (currentResponseId > lastResponseId) {
+            return RedirectToAction("ExamFinished", "Exam");
+        }
+        HttpContext.Session.SetInt32("CurrentResponseId", currentResponseId.Value);
+        
+        
+        var question = await _dbContext.Questions.FirstAsync(q => q.Id == response.QuestionId);
+        var answers = await _dbContext.Answers.Where(a => a.QuestionId == question.Id).ToListAsync();
+        
+        ViewBag.examName = examName;
+        ViewBag.question = question;
+        ViewBag.answers = answers;
+
+        
+        return View();
+    }
+
+    [HttpGet]
+    [Route("/ExamFinished")]
+    public async Task<IActionResult> ExamFinished() {
+
         return View();
     }
 }
