@@ -8,7 +8,7 @@ public class QuestionModel
     public int Id { get; set; }
     public int? ExamId { get; set; }
     public string? QuestionText { get; set; }
-    public int? Points { get; set; }
+    public int Points { get; set; }
     // Closed = 0,
     // Multiple = 1,   
     // TextWithCheck = 2,

@@ -1,0 +1,11 @@
+<h1>Twój wynik to:</h1>
+
+@{
+    int points = ViewBag.result.Points;
+    int maxPoints = ViewBag.result.MaxPoints;
+    double percentage = (double)points / maxPoints * 100;
+}
+
+<p>
+    Zdobyte punkty: @points / @maxPoints (@percentage.ToString("0.00")%)
+</p>

@@ -17,6 +17,5 @@ public class AppDbContext : DbContext {
     public DbSet<UploadedImageModel> UploadedImageModels { get; set; }
     public DbSet<StudentInfoModel> StudentsInfo { get; set; }
     public DbSet<ResponseModel> Responses { get; set; }
-    
-
+    public DbSet<ResultsModel> Results { get; set; }
 }

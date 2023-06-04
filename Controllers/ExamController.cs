@@ -56,6 +56,12 @@ public class ExamController : Controller {
         
         await _dbContext.SaveChangesAsync();
 
+        var results = new ResultsModel() {
+            ExamId = examId.Value,
+            StudentId = studentInfo.Entity.Id,
+            MaxPoints = 0
+        };
+        
         List<QuestionModel> questions;
         
         if (examConfiguration.RandomizeQuestions) 
@@ -63,14 +69,15 @@ public class ExamController : Controller {
         else questions = await _dbContext.Questions.Where(q => q.ExamId == examId).ToListAsync();
         
         foreach (var question in questions) {
+            results.MaxPoints += question.Points;
             var response = await _dbContext.Responses.AddAsync(new ResponseModel() {
                 ExamId = examId.Value,
                 QuestionId = question.Id,
                 StudentId = studentInfo.Entity.Id
             });
-            
         }
-
+        
+        _dbContext.Results.Add(results);
         await _dbContext.SaveChangesAsync();
 
         var first = await _dbContext.Responses.FirstAsync(e => e.StudentId == studentInfo.Entity.Id);
@@ -132,17 +139,30 @@ public class ExamController : Controller {
         
         var response = await _dbContext.Responses.FirstAsync(r => r.Id == currentResponseId);
         response.Response = model.answerContent;
+        
+        var result = await _dbContext.Results.FirstAsync(r => r.StudentId == studentId);
+
+        var answers = await _dbContext.Answers.Where(a => a.ExamId == result.ExamId).ToListAsync();
+
+        var forQuestion = await _dbContext.Questions.FirstAsync(q => q.ExamId == response.ExamId);  
+        foreach (var answer in answers) {
+            if (answer.IsCorrect && response.Response == answer.Content) {
+                result.Points += forQuestion.Points;
+            }
+        }
+        
         await _dbContext.SaveChangesAsync();
 
         currentResponseId = currentResponseId!.Value + 1;
         if (currentResponseId > lastResponseId) {
+            HttpContext.Session.SetInt32("ExamFinished", 1);
             return RedirectToAction("ExamFinished", "Exam");
         }
         HttpContext.Session.SetInt32("CurrentResponseId", currentResponseId.Value);
         
         
         var question = await _dbContext.Questions.FirstAsync(q => q.Id == response.QuestionId);
-        var answers = await _dbContext.Answers.Where(a => a.QuestionId == question.Id).ToListAsync();
+        answers = await _dbContext.Answers.Where(a => a.QuestionId == question.Id).ToListAsync();
         
         ViewBag.examName = examName;
         ViewBag.question = question;
@@ -155,7 +175,14 @@ public class ExamController : Controller {
     [HttpGet]
     [Route("/ExamFinished")]
     public async Task<IActionResult> ExamFinished() {
+        if (HttpContext.Session.GetInt32("ExamFinished") == 1) {
+            var studentId = HttpContext.Session.GetInt32("StudnetId");
+            var result = await _dbContext.Results.FirstAsync(r => r.StudentId == studentId);
 
-        return View();
+            ViewBag.result = result;
+            return View();    
+        } else {
+            return StatusCode(403);
+        }
     }
 }
