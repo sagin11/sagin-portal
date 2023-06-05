@@ -206,8 +206,9 @@ public class ExamController : Controller {
         _dbContext.Responses.Update(response);
         await _dbContext.SaveChangesAsync();
 
-        if (response.Blurs == 3) {
+        if (response.Blurs >= 3) {
             HttpContext.Session.SetInt32("ExamFinished", 1);
+            HttpContext.Session.SetInt32("ExamCheat", 1);
             HttpContext.Session.Remove("FirstResponseId");
             HttpContext.Session.Remove("CurrentResponseId");
             HttpContext.Session.Remove("LastResponseId");
