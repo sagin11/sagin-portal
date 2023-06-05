@@ -4,10 +4,11 @@
     var questions = ViewBag.questions;
     var answers = ViewBag.answers;
 
-    int zdawalons = 32;
-    int sredniWynik = 52;
-    int liczbaPodejsc = 12;
+    var zdawalons = 69;
+    double sredniWynik = ViewBag.avgScore;
+    int liczbaPodejsc = ViewBag.startedTests;
 }
+
 
 <section id="dashboard-exam-header">
     <div class="background">
@@ -56,7 +57,7 @@
                     {
                         firstBar = "#ffedd2";
                         secondBar = "#d9ffd2";
-                        firstBarWidth = sredniWynik;
+                        firstBarWidth = (int)sredniWynik;
                         secondBarWidth = zdawalons;
                     }
                 } 

@@ -31,10 +31,24 @@ public class ExamManagerController : Controller {
             .Where(t => t.CreatorId == HttpContext.Session.GetInt32("UserId") && t.Id == id).ToListAsync();
         var questions = await _dbContext.Questions.Where(t => t.ExamId == id).ToListAsync();
         var answers = await _dbContext.Answers.Where(t => t.ExamId == id).ToListAsync();
+        var results = await _dbContext.Results.Where(r => r.ExamId == id).ToListAsync();
         ViewBag.exams = exams;
         ViewBag.questions = questions;
         ViewBag.answers = answers;
         ViewBag.ExamId = id;
+        ViewBag.startedTests = results.Count;
+        //TODO Zdawalność ile % wymaga  żeby zdać
+
+        double points = 0;
+        int maxPoints = 0; 
+
+        foreach (var result in results)
+        {
+            points += result.Points;
+            maxPoints += result.MaxPoints;
+        }
+        ViewBag.avgScore = Math.Round(points / maxPoints * 100, 0);
+        
         return View();
     }
 

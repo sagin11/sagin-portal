@@ -124,9 +124,7 @@ public class ExamController : Controller {
     [HttpPost]
     [Route("/ExamStarted")]
     public async Task<IActionResult> ExamStarted(SubmitQuestionModel model) {
-        var examId = HttpContext.Session.GetInt32("ExamId");
         var studentId = HttpContext.Session.GetInt32("StudnetId");
-        var firstResponseId = HttpContext.Session.GetInt32("FirstResponseId");
         var currentResponseId = HttpContext.Session.GetInt32("CurrentResponseId");
         var lastResponseId = HttpContext.Session.GetInt32("LastResponseId");
 
