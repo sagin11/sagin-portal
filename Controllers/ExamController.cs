@@ -123,7 +123,8 @@ public class ExamController : Controller {
 
     [HttpPost]
     [Route("/ExamStarted")]
-    public async Task<IActionResult> ExamStarted(SubmitQuestionModel model) {
+    public async Task<IActionResult> ExamStarted(SubmitQuestionModel model)
+    {
         if (HttpContext.Session.GetInt32("ExamFinished") == 1) {
             return RedirectToAction("ExamFinished", "Exam");
         }

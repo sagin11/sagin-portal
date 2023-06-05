@@ -36,7 +36,8 @@ internal abstract class Program
         
         if (!app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Home/Error");
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            app.UseExceptionHandler("/Error/500");
             app.UseHsts();
         }
 
