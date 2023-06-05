@@ -350,8 +350,9 @@ window.addEventListener('blur', function() {
     method: "POST",
     mode: "cors"
   })
-    .then(response => {
-      // Obsługa odpowiedzi
+    .then(response => response.json())
+    .then(data => {
+      document.querySelector("form").submit();
     })
     .catch(error => {
       // Obsługa błędu
