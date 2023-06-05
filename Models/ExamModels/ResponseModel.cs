@@ -6,4 +6,5 @@ public class ResponseModel {
     public int QuestionId { get; set; }
     public int StudentId { get; set; }
     public string? Response { get; set; }
+    public short Blurs { get; set; }
 }
