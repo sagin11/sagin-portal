@@ -25,6 +25,12 @@ internal abstract class Program
         });
         
         builder.Services.Configure<AppUrls>(builder.Configuration.GetSection("AppUrls"));
+
+        builder.Services.AddCors(options => {
+            options.AddDefaultPolicy(policy => {
+                policy.WithOrigins("http://localhost:5289");
+            });
+        });
                 
         var app = builder.Build();
         
@@ -43,6 +49,8 @@ internal abstract class Program
         app.UseRouting();
 
         app.UseAuthorization();
+
+        app.UseCors();
 
         app.MapControllerRoute(
             name: "home",

@@ -124,6 +124,11 @@ public class ExamController : Controller {
     [HttpPost]
     [Route("/ExamStarted")]
     public async Task<IActionResult> ExamStarted(SubmitQuestionModel model) {
+        if (HttpContext.Session.GetInt32("ExamFinished") == 1) {
+            return RedirectToAction("ExamFinished", "Exam");
+        }
+        
+        var examId = HttpContext.Session.GetInt32("ExamId");
         var studentId = HttpContext.Session.GetInt32("StudnetId");
         var currentResponseId = HttpContext.Session.GetInt32("CurrentResponseId");
         var lastResponseId = HttpContext.Session.GetInt32("LastResponseId");
@@ -176,11 +181,38 @@ public class ExamController : Controller {
         if (HttpContext.Session.GetInt32("ExamFinished") == 1) {
             var studentId = HttpContext.Session.GetInt32("StudnetId");
             var result = await _dbContext.Results.FirstAsync(r => r.StudentId == studentId);
+            HttpContext.Session.Clear();
 
             ViewBag.result = result;
             return View();    
         } else {
             return StatusCode(403);
         }
+    }
+
+    [HttpPost]
+    [Route("/generate_204")]
+    public async Task<IActionResult> ExamCheat() {
+        // var studentId = HttpContext.Session.GetInt32("StudentId");
+        var currentResponseId = HttpContext.Session.GetInt32("CurrentResponseId");
+
+        if (currentResponseId == null)
+            return StatusCode(204);
+        
+        var response = await _dbContext.Responses.FirstAsync(r => r.Id == currentResponseId);
+
+        response.Blurs++;
+        
+        _dbContext.Responses.Update(response);
+        await _dbContext.SaveChangesAsync();
+
+        if (response.Blurs == 3) {
+            HttpContext.Session.SetInt32("ExamFinished", 1);
+            HttpContext.Session.Remove("FirstResponseId");
+            HttpContext.Session.Remove("CurrentResponseId");
+            HttpContext.Session.Remove("LastResponseId");
+            return Json(new { message = "Przykro mi" });
+        }
+        return StatusCode(204);
     }
 }
