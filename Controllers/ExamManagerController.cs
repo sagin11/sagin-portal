@@ -161,7 +161,12 @@ public class ExamManagerController : Controller {
     [ServiceFilter(typeof(ExamExistsValidatorAttribute))]
     [Route("/Dashboard/Exam/{id:int}/Activate")]
     public async Task<IActionResult> EnableTest(int id = -1) {
-        var exam = _dbContext.Exams.Where(e => e.Id == id).FirstOrDefault();
+        var exam = await _dbContext.Exams.Where(e => e.Id == id).FirstOrDefaultAsync();
+        var questions = await _dbContext.Questions.Where(q => q.ExamId == exam!.Id).ToListAsync();
+        
+        if (questions.Count <= 0) {
+            return RedirectToAction("ExamDetails", "ExamManager", new {id});
+        }
         
         if (exam == null) {
             return StatusCode(403);

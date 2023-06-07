@@ -25,8 +25,20 @@ public class ExamController : Controller {
         if (examConfiguration == null) {
             return NotFound();
         }
+
         var exam = await _dbContext.Exams.FirstOrDefaultAsync(e => e.Id == examConfiguration.ExamId);
 
+        if (exam!.Status != "Active") {
+            return StatusCode(403, "Exam is not active!");
+        }
+        
+        if (!(examConfiguration.FirstName || examConfiguration.LastName || examConfiguration.Class || examConfiguration.NumberInLogbook)) {
+            return StatusCode(403, "Exam is not configured!");
+        }
+
+        
+        
+        
         ViewBag.Exam = exam!;
         ViewBag.ExamConfiguration = examConfiguration;
         
